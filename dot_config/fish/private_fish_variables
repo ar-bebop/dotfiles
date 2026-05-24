@@ -64,7 +64,7 @@ SETUVAR pure_show_prefix_root_prompt:true
 SETUVAR pure_show_subsecond_command_duration:false
 SETUVAR pure_show_system_time:false
 SETUVAR pure_symbol_aws_profile_prefix:
-SETUVAR pure_symbol_container_prefix:
+SETUVAR pure_symbol_container_prefix:\U0001f4e6\x20
 SETUVAR pure_symbol_exit_status_prefix:\x7c
 SETUVAR pure_symbol_exit_status_separator:\x7c
 SETUVAR pure_symbol_git_dirty:\x2a
