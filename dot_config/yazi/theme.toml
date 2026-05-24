@@ -1,0 +1,26 @@
+[flavor]
+dark  = "noctalia"
+light = "noctalia"
+
+[indicator]
+padding = { open = "░▒▓", close = "" }
+
+[tabs]
+sep_inner = { open = "░▒▓", close = "▓▒░" }
+sep_outer = { open = "", close = "" }
+
+[status]
+sep_left  = { open = "░▒▓", close = "▓▒░" }
+sep_right  = { open = "░▒▓", close = "▓▒░" }
+
+[icon]
+prepend_dirs = [
+    { name = "desktop",   text = "󰇄", is = "dir" },
+    { name = "docs",      text = "󱔗", is = "dir" },
+    { name = "dl",        text = "", is = "dir" },
+    { name = "music",     text = "󰝚", is = "dir" },
+    { name = "pics",      text = "", is = "dir" },
+    { name = "vids",      text = "", is = "dir" },
+    { name = "projects",  text = "", is = "dir" },
+    { name = "scripts",   text = "󰯁", is = "dir" }
+]

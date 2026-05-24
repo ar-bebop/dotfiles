@@ -1,0 +1,13 @@
+spawn-at-startup "qs" "-c" "noctalia-shell"
+
+include "./cfg/animation.kdl"
+include "./cfg/keybinds.kdl"
+include "./cfg/input.kdl"
+include "./cfg/gestures.kdl"
+include "./cfg/recent.kdl"
+include "./cfg/display.kdl"
+include "./cfg/layout.kdl"
+include "./cfg/rules.kdl"
+include "./cfg/misc.kdl"
+
+include "./noctalia.kdl"
