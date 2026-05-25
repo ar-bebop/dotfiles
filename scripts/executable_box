@@ -1,0 +1,569 @@
+#!/bin/sh
+set -eu
+
+IMAGE="${BOX_IMAGE:-docker.io/library/archlinux:latest}"
+PREFIX="${BOX_PREFIX:-box}"
+
+BOX_DIR=".box"
+HOME_DIR="home"
+META_NAME="$BOX_DIR/name"
+META_IMAGE="$BOX_DIR/image"
+
+BASE_PACKAGES="${BOX_PACKAGES:-fish neovim yazi tmux git ripgrep fd fzf bat eza zoxide base-devel python uv npm curl wget ca-certificates unzip zip less man-db openssh jq tree which}"
+CHEZMOI_TARGETS="${BOX_CHEZMOI_TARGETS:-.config/fish .config/nvim .config/yazi .config/git}"
+
+usage() {
+cat <<EOF
+Usage:
+box init [name]       Initialize box, provision packages, seed dotfiles
+box enter            Enter current directory's box; auto-stop on exit
+box status           Show current box info
+box provision        Install/update baseline packages inside box
+box seed             Apply chezmoi dotfiles into ./home
+box stop             Stop current directory's container
+box rebuild          Recreate container, keep ./home
+box purge            Remove container and delete .box/ and ./home
+box clean            Remove orphan container for this directory
+box doctor           Check box dependencies and state
+box name             Print container name
+
+Environment:
+BOX_IMAGE=$IMAGE
+BOX_PREFIX=$PREFIX
+BOX_PACKAGES="$BASE_PACKAGES"
+BOX_CHEZMOI_TARGETS="$CHEZMOI_TARGETS"
+EOF
+}
+
+sanitize_name() {
+    printf '%s' "$1" |
+    tr '[:upper:]' '[:lower:]' |
+    sed 's/[^a-z0-9._-]/-/g; s/--*/-/g; s/^-//; s/-$//'
+}
+
+project_default_name() {
+    basename "$PWD" | sed 's/[^a-zA-Z0-9._-]/-/g'
+}
+
+default_container_name() {
+    raw_name="${1:-$(project_default_name)}"
+    name="$(sanitize_name "$raw_name")"
+
+    if [ -z "$name" ]; then
+        echo "Invalid box name." >&2
+        exit 1
+    fi
+
+    printf '%s\n' "$PREFIX-$name"
+}
+
+container_exists() {
+    cname="$1"
+    podman container exists "$cname" >/dev/null 2>&1
+}
+
+container_running() {
+    cname="$1"
+    podman ps --format '{{.Names}}' 2>/dev/null | grep -qx "$cname"
+}
+
+container_has_home_mount() {
+    cname="$1"
+    podman inspect "$cname" --format '{{range .Mounts}}{{println .Destination}}{{end}}' 2>/dev/null |
+    grep -Fxq "$PWD/$HOME_DIR"
+}
+
+image_exists() {
+    image="$1"
+    podman image exists "$image" >/dev/null 2>&1
+}
+
+run_non_interactive() {
+    DBX_NON_INTERACTIVE=1 "$@" </dev/null
+}
+
+enter_env_flags() {
+    printf '%s' '--env NIRI_SOCKET= --env SWAYSOCK= --env HYPRLAND_INSTANCE_SIGNATURE='
+}
+
+confirm_or_cancel() {
+    printf 'Continue? [y/N] '
+    read ans
+
+    case "$ans" in
+        y|Y|yes|YES) ;;
+        *)
+            echo "Cancelled."
+            exit 0
+            ;;
+    esac
+}
+
+home_has_contents() {
+    [ -d "$PWD/$HOME_DIR" ] &&
+    find "$PWD/$HOME_DIR" -mindepth 1 -maxdepth 1 -print -quit | grep -q .
+}
+
+prepare_box_dirs() {
+    if [ -e "$PWD/$HOME_DIR" ] && [ ! -d "$PWD/$HOME_DIR" ]; then
+        echo "Cannot create box home: $PWD/$HOME_DIR already exists and is not a directory." >&2
+        exit 1
+    fi
+
+    mkdir -p "$PWD/$BOX_DIR" "$PWD/$HOME_DIR"
+}
+
+need_initialized() {
+    if [ ! -f "$META_NAME" ]; then
+        echo "No box initialized in this directory." >&2
+        echo "Run: box init [name]" >&2
+        exit 1
+    fi
+}
+
+container_name() {
+    need_initialized
+    cat "$META_NAME"
+}
+
+container_image() {
+    need_initialized
+    cat "$META_IMAGE"
+}
+
+pull_image() {
+    image="$1"
+
+    if ! image_exists "$image"; then
+        echo "Pulling image: $image"
+        run_non_interactive podman pull "$image"
+    fi
+}
+
+create_container() {
+    cname="$1"
+    image="$2"
+
+    prepare_box_dirs
+    pull_image "$image"
+
+    run_non_interactive distrobox create \
+    --name "$cname" \
+    --hostname "$cname" \
+    --image "$image" \
+    --home "$PWD/$HOME_DIR" \
+    --additional-packages "$BASE_PACKAGES" \
+    --yes
+}
+
+ensure_container() {
+    cname="$(container_name)"
+    image="$(container_image)"
+
+    if ! container_exists "$cname"; then
+        echo "Container missing. Recreating: $cname"
+        create_container "$cname" "$image"
+    elif ! container_has_home_mount "$cname"; then
+        echo "Container needs rebuild to use ./home as its home: $cname" >&2
+        echo "Run: box rebuild" >&2
+        exit 1
+    fi
+}
+
+stop_container() {
+    cname="$1"
+    run_non_interactive distrobox stop --yes "$cname" >/dev/null 2>&1 ||
+    podman stop "$cname" </dev/null >/dev/null 2>&1 ||
+    true
+}
+
+provision_box() {
+    cname="$(container_name)"
+    image="$(container_image)"
+
+    ensure_container
+
+    case "$image" in
+        *archlinux:*)
+            echo "Provisioning Arch packages in $cname..."
+            run_non_interactive distrobox enter --no-tty --additional-flags "$(enter_env_flags)" "$cname" -- \
+            sudo pacman -Syu --needed --noconfirm $BASE_PACKAGES
+            ;;
+        *)
+            echo "Provisioning is currently configured only for Arch-based boxes." >&2
+            echo "Current image: $image" >&2
+            exit 1
+            ;;
+    esac
+
+    stop_container "$cname"
+    echo "Provisioned: $cname"
+}
+
+seed_box() {
+    need_initialized
+    cname="$(container_name)"
+
+    if ! command -v chezmoi >/dev/null 2>&1; then
+        echo "chezmoi is not installed on the host." >&2
+        echo "Install it first: sudo pacman -S chezmoi" >&2
+        exit 1
+    fi
+
+    if ! chezmoi source-path >/dev/null 2>&1; then
+        echo "chezmoi is not initialized." >&2
+        echo "Run: chezmoi init" >&2
+        exit 1
+    fi
+
+    prepare_box_dirs
+
+    echo "Applying chezmoi dotfiles into:"
+    echo "  $PWD/$HOME_DIR"
+
+    apply_selected_dotfiles
+    prepare_box_dirs
+    bootstrap_fish_plugins "$cname"
+
+    echo "Seeded dotfiles into box home."
+}
+
+apply_selected_dotfiles() {
+    dest="$PWD/$HOME_DIR"
+    set -- $CHEZMOI_TARGETS
+
+    if [ "$#" -eq 0 ]; then
+        return
+    fi
+
+    for target do
+        if chezmoi managed | grep -Fxq "$target"; then
+            chezmoi --force apply --parent-dirs --destination "$dest" "$dest/$target"
+        else
+            echo "Skipping unmanaged chezmoi target: $target" >&2
+        fi
+    done
+}
+
+bootstrap_fish_plugins() {
+    cname="$1"
+
+    if [ ! -f "$PWD/$HOME_DIR/.config/fish/fish_plugins" ]; then
+        return
+    fi
+
+    ensure_container
+
+    echo "Bootstrapping fish plugins in $cname..."
+
+    run_non_interactive distrobox enter --no-tty --additional-flags "$(enter_env_flags)" "$cname" -- sh -lc '
+        set -eu
+
+        mkdir -p "$HOME/.config/fish/functions"
+
+        curl -fsSL \
+        https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish \
+        -o "$HOME/.config/fish/functions/fisher.fish"
+
+        fish -lc "fisher update"
+    '
+}
+
+init_box() {
+    cname="$(default_container_name "${1:-$(project_default_name)}")"
+    home_created=0
+    init_done=0
+
+    if [ -e "$BOX_DIR" ]; then
+        echo "Box already exists in this directory: $PWD/$BOX_DIR" >&2
+        exit 1
+    fi
+
+    if home_has_contents; then
+        echo "Box home already exists and is not empty: $PWD/$HOME_DIR" >&2
+        echo "Move it aside or run box init from a clean project directory." >&2
+        exit 1
+    fi
+
+    if container_exists "$cname"; then
+        echo "Container already exists but this directory has no box metadata: $cname" >&2
+        echo "Run: box clean" >&2
+        echo "Or use another name: box init <name>" >&2
+        exit 1
+    fi
+
+    if [ ! -e "$HOME_DIR" ]; then
+        home_created=1
+    fi
+
+    cleanup_init() {
+        if [ "$init_done" -eq 1 ]; then
+            return
+        fi
+
+        echo "Initialization failed; cleaning up partial box." >&2
+        stop_container "$cname"
+        podman rm --force "$cname" </dev/null >/dev/null 2>&1 || true
+        rm -rf -- "$BOX_DIR"
+
+        if [ "$home_created" -eq 1 ]; then
+            rm -rf -- "$HOME_DIR"
+        else
+            echo "Left existing home directory in place: $PWD/$HOME_DIR" >&2
+        fi
+    }
+
+    trap cleanup_init EXIT HUP INT TERM
+
+    prepare_box_dirs
+
+    printf '%s\n' "$cname" > "$META_NAME"
+    printf '%s\n' "$IMAGE" > "$META_IMAGE"
+
+    create_container "$cname" "$IMAGE"
+    seed_box
+    stop_container "$cname"
+
+    init_done=1
+    trap - EXIT HUP INT TERM
+
+    echo
+    echo "Initialized box:"
+    echo "  Name:  $cname"
+    echo "  Image: $IMAGE"
+    echo "  Home:  $PWD/$HOME_DIR"
+    echo
+    echo "Enter with:"
+    echo "  box enter"
+}
+
+enter_box() {
+    cname="$(container_name)"
+
+    ensure_container
+    prepare_box_dirs
+
+    distrobox enter --no-workdir --additional-flags "$(enter_env_flags)" "$cname" -- sh -lc 'cd "$HOME" && exec fish -l'
+
+    stop_container "$cname"
+}
+
+status_box() {
+    need_initialized
+
+    cname="$(cat "$META_NAME")"
+    image="$(cat "$META_IMAGE")"
+
+    echo "Name:       $cname"
+    echo "Image:      $image"
+    echo "Project:    $PWD"
+    echo "Box dir:    $PWD/$BOX_DIR"
+    echo "Home:       $PWD/$HOME_DIR"
+
+    if container_exists "$cname"; then
+        if ! container_has_home_mount "$cname"; then
+            echo "Container:  exists, needs rebuild"
+        elif container_running "$cname"; then
+            echo "Container:  running"
+        else
+            echo "Container:  exists, stopped"
+        fi
+    else
+        echo "Container:  missing"
+    fi
+}
+
+doctor_box() {
+    default_cname="$(default_container_name)"
+
+    echo "Project:    $PWD"
+    echo "Box dir:    $PWD/$BOX_DIR"
+    echo "Home:       $PWD/$HOME_DIR"
+    echo "Default:    $default_cname"
+    echo
+
+    for tool in podman distrobox chezmoi; do
+        if command -v "$tool" >/dev/null 2>&1; then
+            echo "$tool:      ok"
+        else
+            echo "$tool:      missing"
+        fi
+    done
+
+    if command -v chezmoi >/dev/null 2>&1 && chezmoi source-path >/dev/null 2>&1; then
+        echo "chezmoi:    initialized"
+    else
+        echo "chezmoi:    not initialized"
+    fi
+
+    echo
+
+    if [ -f "$META_NAME" ]; then
+        cname="$(cat "$META_NAME")"
+        image="$(cat "$META_IMAGE" 2>/dev/null || printf '%s' "$IMAGE")"
+        echo "Metadata:   initialized"
+        echo "Name:       $cname"
+        echo "Image:      $image"
+
+        if container_exists "$cname"; then
+            if ! container_has_home_mount "$cname"; then
+                echo "Container:  exists, needs rebuild"
+                echo "Next:       box rebuild"
+            elif container_running "$cname"; then
+                echo "Container:  running"
+                echo "Next:       box enter"
+            else
+                echo "Container:  exists, stopped"
+                echo "Next:       box enter"
+            fi
+        else
+            echo "Container:  missing"
+            echo "Next:       box enter"
+        fi
+    else
+        echo "Metadata:   missing"
+
+        if container_exists "$default_cname"; then
+            echo "Container:  orphan exists: $default_cname"
+            echo "Next:       box clean"
+        else
+            echo "Container:  missing"
+            echo "Next:       box init"
+        fi
+    fi
+
+    if [ -d "$HOME_DIR" ]; then
+        if home_has_contents; then
+            echo "Home:       exists, not empty"
+        else
+            echo "Home:       exists, empty"
+        fi
+    elif [ -e "$HOME_DIR" ]; then
+        echo "Home:       exists, not a directory"
+    else
+        echo "Home:       missing"
+    fi
+}
+
+stop_box() {
+    cname="$(container_name)"
+    stop_container "$cname"
+    echo "Stopped: $cname"
+}
+
+clean_box() {
+    if [ -e "$BOX_DIR" ]; then
+        echo "Box metadata exists in this directory; use box purge instead." >&2
+        exit 1
+    fi
+
+    cname="$(default_container_name)"
+
+    if ! container_exists "$cname"; then
+        echo "No orphan container found: $cname"
+        exit 0
+    fi
+
+    echo "This will remove orphan container:"
+    echo "  Container: $cname"
+    echo
+    echo "It will keep:"
+    echo "  Home:      $PWD/$HOME_DIR"
+    echo
+    confirm_or_cancel
+
+    stop_container "$cname"
+    podman rm --force "$cname" </dev/null >/dev/null 2>&1 || true
+
+    echo "Removed orphan container: $cname"
+    echo "Kept home: $PWD/$HOME_DIR"
+}
+
+rebuild_box() {
+    cname="$(container_name)"
+    image="$(container_image)"
+
+    echo "This will recreate the container but keep:"
+    echo "  $PWD/$HOME_DIR"
+    echo "  $PWD"
+    echo
+    echo "It will remove container-installed system packages."
+    confirm_or_cancel
+
+    stop_container "$cname"
+    podman rm --force "$cname" </dev/null >/dev/null 2>&1 || true
+
+    create_container "$cname" "$image"
+    seed_box
+    stop_container "$cname"
+
+    echo "Rebuilt container: $cname"
+    echo "Kept home: $PWD/$HOME_DIR"
+}
+
+purge_box() {
+    cname="$(container_name)"
+
+    echo "This will permanently remove:"
+    echo "  Container: $cname"
+    echo "  Box dir:   $PWD/$BOX_DIR"
+    echo "  Home:      $PWD/$HOME_DIR"
+    echo
+    confirm_or_cancel
+
+    stop_container "$cname"
+    podman rm --force "$cname" </dev/null >/dev/null 2>&1 || true
+    rm -rf -- "$BOX_DIR"
+    rm -rf -- "$HOME_DIR"
+
+    echo "Purged box: $cname"
+}
+
+print_name() {
+    container_name
+}
+
+cmd="${1:-}"
+if [ "$#" -gt 0 ]; then
+    shift
+fi
+
+case "$cmd" in
+    init)
+        init_box "${1:-}"
+        ;;
+    enter)
+        enter_box
+        ;;
+    status)
+        status_box
+        ;;
+    provision)
+        provision_box
+        ;;
+    seed)
+        seed_box
+        ;;
+    stop)
+        stop_box
+        ;;
+    clean)
+        clean_box
+        ;;
+    doctor)
+        doctor_box
+        ;;
+    rebuild)
+        rebuild_box
+        ;;
+    purge)
+        purge_box
+        ;;
+    name)
+        print_name
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac
