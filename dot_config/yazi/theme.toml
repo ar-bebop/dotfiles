@@ -1,6 +1,6 @@
 [flavor]
-dark  = "noctalia"
-light = "noctalia"
+dark  = "base16"
+light = "base16"
 
 [indicator]
 padding = { open = "░▒▓", close = "" }

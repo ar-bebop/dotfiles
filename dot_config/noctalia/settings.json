@@ -671,10 +671,6 @@
             {
                 "enabled": true,
                 "id": "discord"
-            },
-            {
-                "enabled": true,
-                "id": "yazi"
             }
         ],
         "enableUserTheming": true
