@@ -1,6 +1,8 @@
 function fish_greeting
 end
 
+fish_vi_key_bindings
+
 ! set --query fisher_path[1] || test "$fisher_path" = $__fish_config_dir && exit
 
 set fish_complete_path $fish_complete_path[1] $fisher_path/completions $fish_complete_path[2..]
