@@ -19,3 +19,7 @@ post_hook = 'pkill -SIGUSR1 nvim'
 input_path = "~/.config/noctalia/templates/foot-sequences.sh"
 output_path = "~/.cache/noctalia/foot-sequences.sh"
 post_hook = 'bash ~/.cache/noctalia/foot-sequences.sh'
+
+[templates.claude]
+input_path = "~/.config/noctalia/templates/claude.json"
+output_path = "~/.claude/themes/ansi.json"
