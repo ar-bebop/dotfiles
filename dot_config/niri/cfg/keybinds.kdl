@@ -2,12 +2,14 @@ binds {
     Mod+Shift+ESCAPE                    { show-hotkey-overlay; }
 
     // Noctalia
-    Mod+P                     		    hotkey-overlay-title="Open App Launcher: noctalia launcher" { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
-    Mod+BackSpace                       hotkey-overlay-title="Lock Screen: noctalia lock" { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
-    Mod+Shift+Q                         hotkey-overlay-title="Session Menu: noctalia sessionMenu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
+    Mod+P                     		    hotkey-overlay-title="Open App Launcher" { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
+    Mod+BackSpace                       hotkey-overlay-title="Lock Screen" { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
+    Mod+Shift+Q                         hotkey-overlay-title="Session Menu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
+    Mod+A                               hotkey-overlay-title="Assistant Panel" { spawn-sh "qs -c noctalia-shell ipc call plugin:assistant-panel toggle"; }
+    Mod+V                               hotkey-overlay-title="Clipboard" { spawn-sh "qs -c noctalia-shell ipc call plugin:clipper toggle"; }
 
     // Applications
-    Mod+Return                          hotkey-overlay-title="Open Terminal: Alacritty" { spawn "foot"; }
+    Mod+Return                          hotkey-overlay-title="Open Terminal: foot" { spawn "foot"; }
     Mod+I                               hotkey-overlay-title="Open Browser: Zen Browser" { spawn "zen-browser"; }
     Mod+E                               hotkey-overlay-title="File Manager: Nautilus" { spawn "nautilus"; }
 
@@ -53,8 +55,8 @@ binds {
 
     Mod+H                               { focus-column-or-monitor-left; }
     Mod+L                               { focus-column-or-monitor-right; }
-    Mod+K                               { focus-window-or-monitor-up; }
-    Mod+J                               { focus-window-or-monitor-down; }
+    Mod+K                               { focus-window-or-workspace-up; }
+    Mod+J                               { focus-window-or-workspace-down; }
     Mod+CTRL+WheelScrollDown           	{ focus-column-right; }
     Mod+CTRL+WheelScrollUp             	{ focus-column-left; }
 

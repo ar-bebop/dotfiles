@@ -56,10 +56,13 @@
         "hideOnOverview": false,
         "marginHorizontal": 4,
         "marginVertical": 4,
-        "middleClickAction": "none",
+        "middleClickAction": "settings",
         "middleClickCommand": "",
-        "middleClickFollowMouse": false,
+        "middleClickFollowMouse": true,
         "monitors": [
+            "eDP-1",
+            "DP-1",
+            "HDMI-A-1"
         ],
         "mouseWheelAction": "none",
         "mouseWheelWrap": true,
@@ -70,6 +73,85 @@
         "rightClickCommand": "",
         "rightClickFollowMouse": true,
         "screenOverrides": [
+            {
+                "enabled": true,
+                "name": "DP-1",
+                "widgets": {
+                    "center": [
+                        {
+                            "characterCount": 2,
+                            "colorizeIcons": false,
+                            "emptyColor": "secondary",
+                            "enableScrollWheel": true,
+                            "focusedColor": "primary",
+                            "followFocusedScreen": false,
+                            "fontWeight": "bold",
+                            "groupedBorderOpacity": 1,
+                            "hideUnoccupied": false,
+                            "iconScale": 0.8,
+                            "id": "Workspace",
+                            "labelMode": "index",
+                            "occupiedColor": "secondary",
+                            "pillSize": 0.6,
+                            "showApplications": false,
+                            "showApplicationsHover": false,
+                            "showBadge": true,
+                            "showLabelsOnlyWhenOccupied": true,
+                            "unfocusedIconsOpacity": 1
+                        }
+                    ],
+                    "left": [
+                        {
+                            "clockColor": "none",
+                            "customFont": "",
+                            "formatHorizontal": "HH:mm ddd, MMM dd",
+                            "formatVertical": "HH mm - dd MM",
+                            "id": "Clock",
+                            "tooltipFormat": "HH:mm ddd, MMM dd",
+                            "useCustomFont": false
+                        },
+                        {
+                            "colorizeIcons": false,
+                            "hideMode": "hidden",
+                            "id": "ActiveWindow",
+                            "maxWidth": 400,
+                            "scrollingMode": "hover",
+                            "showIcon": true,
+                            "showText": true,
+                            "textColor": "none",
+                            "useFixedWidth": false
+                        },
+                        {
+                            "compactMode": false,
+                            "hideMode": "hidden",
+                            "hideWhenIdle": false,
+                            "id": "MediaMini",
+                            "maxWidth": 200,
+                            "panelShowAlbumArt": true,
+                            "scrollingMode": "hover",
+                            "showAlbumArt": true,
+                            "showArtistFirst": true,
+                            "showProgressRing": false,
+                            "showVisualizer": true,
+                            "textColor": "none",
+                            "useFixedWidth": false,
+                            "visualizerType": "wave"
+                        }
+                    ],
+                    "right": [
+                        {
+                            "colorizeDistroLogo": false,
+                            "colorizeSystemIcon": "none",
+                            "colorizeSystemText": "none",
+                            "customIconPath": "",
+                            "enableColorization": false,
+                            "icon": "noctalia",
+                            "id": "ControlCenter",
+                            "useDistroLogo": false
+                        }
+                    ]
+                }
+            }
         ],
         "showCapsule": true,
         "showOnWorkspaceSwitch": true,
@@ -78,6 +160,35 @@
         "widgetSpacing": 6,
         "widgets": {
             "center": [
+                {
+                    "defaultSettings": {
+                        "ai": {
+                            "apiKeys": {
+                            },
+                            "maxHistoryLength": 100,
+                            "model": "gemini-2.5-flash",
+                            "openaiBaseUrl": "https://api.openai.com/v1/chat/completions",
+                            "openaiLocal": false,
+                            "provider": "google",
+                            "systemPrompt": "You are a helpful assistant integrated into a Linux desktop shell. Be concise and helpful.",
+                            "temperature": 0.7
+                        },
+                        "maxHistoryLength": 100,
+                        "panelDetached": true,
+                        "panelHeightRatio": 0.85,
+                        "panelPosition": "right",
+                        "panelWidth": 520,
+                        "scale": 1,
+                        "translator": {
+                            "backend": "google",
+                            "deeplApiKey": "",
+                            "realTimeTranslation": true,
+                            "sourceLanguage": "auto",
+                            "targetLanguage": "en"
+                        }
+                    },
+                    "id": "plugin:assistant-panel"
+                },
                 {
                     "characterCount": 2,
                     "colorizeIcons": false,
@@ -173,9 +284,38 @@
             "right": [
                 {
                     "defaultSettings": {
-                        "mainDeviceId": ""
+                        "apiKey": "YOUR_API_KEY_HERE",
+                        "category": "general",
+                        "country": "us",
+                        "language": "en",
+                        "maxHeadlines": 10,
+                        "refreshInterval": 30,
+                        "rollingSpeed": 50,
+                        "widgetWidth": 300
                     },
-                    "id": "plugin:valent-connect"
+                    "id": "plugin:news"
+                },
+                {
+                    "defaultSettings": {
+                        "feeds": [
+                        ],
+                        "markAsReadOnClick": true,
+                        "maxItemsPerFeed": 10,
+                        "readItems": [
+                        ],
+                        "showOnlyUnread": false,
+                        "updateInterval": 600
+                    },
+                    "id": "plugin:rss-feed"
+                },
+                {
+                    "defaultSettings": {
+                        "currentIconName": "world-download",
+                        "hideOnZero": false,
+                        "updateIntervalMinutes": 30,
+                        "updateTerminalCommand": "foot -e"
+                    },
+                    "id": "plugin:update-count"
                 },
                 {
                     "blacklist": [
@@ -305,12 +445,35 @@
                     "id": "Bluetooth"
                 },
                 {
+                    "defaultSettings": {
+                        "mainDeviceId": ""
+                    },
+                    "id": "plugin:valent-connect"
+                },
+                {
                     "id": "WallpaperSelector"
                 }
             ],
             "right": [
                 {
-                    "id": "Notifications"
+                    "defaultSettings": {
+                        "autoPaste": false,
+                        "autoPasteDelay": 300,
+                        "autoPasteOnRightClick": false,
+                        "cardColors": {
+                        },
+                        "customColors": {
+                        },
+                        "enableTodoIntegration": false,
+                        "fullscreenMode": false,
+                        "hidePanelBackground": false,
+                        "notecardsEnabled": true,
+                        "panelHeight": 0,
+                        "panelWidth": 1450,
+                        "pincardsEnabled": true,
+                        "showCloseButton": true
+                    },
+                    "id": "plugin:clipper"
                 },
                 {
                     "id": "PowerProfile"
@@ -325,7 +488,7 @@
         }
     },
     "desktopWidgets": {
-        "enabled": false,
+        "enabled": true,
         "gridSnap": false,
         "gridSnapScale": false,
         "monitorWidgets": [
@@ -336,6 +499,11 @@
             },
             {
                 "name": "eDP-1",
+                "widgets": [
+                ]
+            },
+            {
+                "name": "HDMI-A-1",
                 "widgets": [
                 ]
             }
@@ -552,15 +720,15 @@
         "overlayLayer": true
     },
     "plugins": {
-        "autoUpdate": false,
+        "autoUpdate": true,
         "notifyUpdates": true
     },
     "sessionMenu": {
         "countdownDuration": 4000,
         "enableCountdown": true,
-        "largeButtonsLayout": "grid",
-        "largeButtonsStyle": true,
-        "position": "center",
+        "largeButtonsLayout": "single-row",
+        "largeButtonsStyle": false,
+        "position": "top_center",
         "powerOptions": [
             {
                 "action": "lock",

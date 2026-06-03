@@ -1,3 +1,5 @@
+set -U fish_key_bindings fish_vi_key_bindings
+
 # pure
 set -U pure_symbol_prompt '$'
 set -U pure_enable_single_line_prompt true
