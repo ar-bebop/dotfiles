@@ -845,7 +845,7 @@
     },
     "ui": {
         "boxBorderEnabled": false,
-        "fontDefault": "Adwaita Sans",
+        "fontDefault": "",
         "fontDefaultScale": 1,
         "fontFixed": "monospace",
         "fontFixedScale": 1,
