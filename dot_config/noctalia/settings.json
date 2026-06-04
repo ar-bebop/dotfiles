@@ -845,9 +845,9 @@
     },
     "ui": {
         "boxBorderEnabled": false,
-        "fontDefault": "",
+        "fontDefault": "Iosevka NF",
         "fontDefaultScale": 1,
-        "fontFixed": "monospace",
+        "fontFixed": "Iosevka NFM",
         "fontFixedScale": 1,
         "panelBackgroundOpacity": 0.93,
         "panelsAttachedToBar": true,
