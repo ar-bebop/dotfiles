@@ -621,7 +621,7 @@
         "wallpaperChange": ""
     },
     "idle": {
-        "customCommands": "[]",
+        "customCommands": "[{\"name\":\"Suspend if on battery\",\"timeout\":1800,\"command\":\"/home/bebop/.config/noctalia/suspend-if-on-battery.sh\",\"resumeCommand\":\"\"}]",
         "enabled": true,
         "fadeDuration": 5,
         "lockCommand": "",
@@ -632,7 +632,7 @@
         "screenOffCommand": "",
         "screenOffTimeout": 1200,
         "suspendCommand": "",
-        "suspendTimeout": 1800
+        "suspendTimeout": 0
     },
     "location": {
         "analogClockInCalendar": false,
