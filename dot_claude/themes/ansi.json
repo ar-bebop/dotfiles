@@ -1,0 +1,9 @@
+{
+  "name": "ansi",
+  "base": "dark-ansi",
+  "overrides": {
+    "background": "#15130e",
+    "userMessageBackground": "#15130e",
+    "selectionBg": "ansi:black"
+  }
+}
