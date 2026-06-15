@@ -10,3 +10,11 @@
 .config/niri/noctalia.kdl
 .config/foot/themes/noctalia
 .config/nvim/lua/matugen.lua
+
+# --- Per-machine / machine-specific: deliberately NOT tracked ---
+# niri display & monitor layout (outputs/scale/resolution) differs per machine
+.config/niri/cfg/display.kdl
+# fish-managed universal var state; PATH is set portably in conf.d/20-paths.fish (~)
+.config/fish/fish_variables
+# machine-specific git signing key — git includes config.local; each machine keeps its own
+.config/git/config.local
