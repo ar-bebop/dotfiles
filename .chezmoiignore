@@ -1,0 +1,5 @@
+# Noctalia auto-installs enabled plugins from plugins.json on startup, so track
+# only the manifest (.config/noctalia/plugins.json) — never the upstream plugin
+# code. This also avoids chezmoi's additive re-add never removing plugin folders
+# you've deleted: add/remove plugins by editing plugins.json instead.
+.config/noctalia/plugins
