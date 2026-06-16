@@ -1,9 +1,0 @@
-{
-  "name": "ansi",
-  "base": "dark-ansi",
-  "overrides": {
-    "background": "{{colors.surface.default.hex}}",
-    "userMessageBackground": "{{colors.surface.default.hex}}",
-    "selectionBg": "ansi:black"
-  }
-}
