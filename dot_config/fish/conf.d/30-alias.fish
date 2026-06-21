@@ -30,7 +30,7 @@ alias gitpkg='pacman -Q | grep -i "\-git" | wc -l'                  # List amoun
 alias mirror="sudo cachyos-rate-mirrors"
 
 alias please='sudo'
-alias tb='nc termbin.com 9999'
+alias tb='ncat termbin.com 9999'
 
 # Cleanup orphaned packages
 alias cleanup='sudo pacman -Rns (pacman -Qtdq)'
