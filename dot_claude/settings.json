@@ -70,6 +70,6 @@
   "skipWorkflowUsageWarning": true,
   "theme": "custom:ansi",
   "editorMode": "vim",
-  "preferredNotifChannel": "iterm2",
+  "preferredNotifChannel": "ghostty",
   "voiceEnabled": false
 }
