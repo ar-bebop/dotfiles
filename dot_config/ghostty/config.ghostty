@@ -1,0 +1,24 @@
+theme = noctalia
+
+font-family = monospace
+font-size = 14
+
+window-padding-x = 10
+window-padding-y = 10
+window-padding-balance = true
+
+cursor-style = bar
+
+background-opacity = 0.5
+
+resize-overlay = never
+
+quit-after-last-window-closed = true
+quit-after-last-window-closed-delay = 5m
+
+keybind = ctrl+shift+k=jump_to_prompt:-1
+keybind = ctrl+shift+j=jump_to_prompt:1
+
+keybind = ctrl+shift+t=unbind
+keybind = ctrl+shift+o=unbind
+keybind = ctrl+shift+e=unbind
