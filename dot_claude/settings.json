@@ -1,4 +1,64 @@
 {
+  "editorMode": "vim",
+  "effortLevel": "xhigh",
+  "enabledPlugins": {
+    "chrome-devtools-mcp@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "cloud-sql-postgresql@claude-plugins-official": true,
+    "code-modernization@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "firecrawl@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "jdtls-lsp@claude-plugins-official": true,
+    "lua-lsp@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true,
+    "remember@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "taste-skill@taste-skill": true,
+    "terraform@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "understand-anything@understand-anything": true,
+    "workos@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "taste-skill": {
+      "source": {
+        "repo": "Leonxlnx/taste-skill",
+        "source": "github"
+      }
+    },
+    "understand-anything": {
+      "source": {
+        "repo": "Egonex-AI/Understand-Anything",
+        "source": "github"
+      }
+    }
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "bash '/home/bebop/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "*"
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "mcp__codegraph__codegraph_explore",
@@ -12,64 +72,18 @@
     ],
     "defaultMode": "auto"
   },
+  "preferredNotifChannel": "ghostty",
+  "skipWorkflowUsageWarning": true,
   "statusLine": {
-    "type": "command",
     "command": "bash \"/home/bebop/.claude/statusline.sh\"",
-    "refreshInterval": 2
+    "refreshInterval": 2,
+    "type": "command"
   },
-  "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true,
-    "ralph-loop@claude-plugins-official": true,
-    "claude-code-setup@claude-plugins-official": true,
-    "code-modernization@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true,
-    "playwright@claude-plugins-official": true,
-    "feature-dev@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true,
-    "chrome-devtools-mcp@claude-plugins-official": true,
-    "remember@claude-plugins-official": true,
-    "firecrawl@claude-plugins-official": true,
-    "jdtls-lsp@claude-plugins-official": true,
-    "clangd-lsp@claude-plugins-official": true,
-    "lua-lsp@claude-plugins-official": true,
-    "terraform@claude-plugins-official": true,
-    "cloud-sql-postgresql@claude-plugins-official": true,
-    "workos@claude-plugins-official": true,
-    "gopls-lsp@claude-plugins-official": true,
-    "understand-anything@understand-anything": true,
-    "taste-skill@taste-skill": true
-  },
-  "extraKnownMarketplaces": {
-    "understand-anything": {
-      "source": {
-        "source": "github",
-        "repo": "Egonex-AI/Understand-Anything"
-      }
-    },
-    "taste-skill": {
-      "source": {
-        "source": "github",
-        "repo": "Leonxlnx/taste-skill"
-      }
-    }
-  },
-  "effortLevel": "xhigh",
+  "theme": "custom:ansi",
   "tui": "fullscreen",
   "voice": {
     "enabled": false,
     "mode": "hold"
   },
-  "skipWorkflowUsageWarning": true,
-  "theme": "custom:ansi",
-  "editorMode": "vim",
-  "preferredNotifChannel": "ghostty",
   "voiceEnabled": false
 }
