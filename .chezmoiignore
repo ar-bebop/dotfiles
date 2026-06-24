@@ -13,8 +13,3 @@
 .config/fish/fish_variables
 # machine-specific git signing key — git includes config.local; each machine keeps its own
 .config/git/config.local
-
-# yazi plugins & flavors are full upstream repo clones, pinned in package.toml
-# and reinstalled with `ya pkg install`. Track only the manifest + config.
-.config/yazi/plugins
-.config/yazi/flavors
