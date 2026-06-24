@@ -1,7 +1,6 @@
 [mgr]
 ratio = [1, 2, 4]
 scrolloff = 128
-title_format = "yazi: {cwd}"
 
 [preview]
 wrap = "no"
