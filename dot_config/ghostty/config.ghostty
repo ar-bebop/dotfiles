@@ -1,6 +1,8 @@
 theme = noctalia
 palette-generate = true
 
+custom-shader = shaders/cursor_warp.glsl
+
 font-family = monospace
 font-size = 14
 
