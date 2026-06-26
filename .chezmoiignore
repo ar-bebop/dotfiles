@@ -3,7 +3,7 @@
 # regenerates them on the target machine when a theme is applied.
 .config/niri/noctalia.kdl
 .config/foot/themes/noctalia
-.config/nvim/lua/matugen.lua
+.config/nvim/lua/palette.lua
 .claude/themes/ansi.json
 
 # --- Per-machine / machine-specific: deliberately NOT tracked ---
