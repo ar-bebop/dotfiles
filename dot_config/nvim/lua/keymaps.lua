@@ -40,7 +40,7 @@ wk.add({
     { '<leader>bb', function() require('dap').toggle_breakpoint() end, desc = 'toggle breakpoint' },
     { '<leader>bB', function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = 'conditional breakpoint' },
     { '<leader>br', function() require('dap').repl.open() end, desc = 'REPL' },
-    { '<leader>br', function() require('dap').repl.run_last() end, desc = 'run last' },
+    { '<leader>bl', function() require('dap').repl.run_last() end, desc = 'run last' },
 
     { '<leader>w', group = 'workspace' },
     { '<leader>wa', vim.lsp.buf.add_workspace_folder, desc = 'add' },
@@ -82,8 +82,6 @@ set('n', '<up>', function() require('dap').restart_frame() end, { desc = 'restar
 wk.add({
     { '[q', vim.cmd.cprev, desc = 'previous quickfix' },
     { ']q', vim.cmd.cnext, desc = 'next quickfix' },
-    { '[d', vim.diagnostic.goto_prev, desc = 'previous diagnosis' },
-    { ']d', vim.diagnostic.goto_next, desc = 'next diagnosis' },
 })
 
 -- window stuff

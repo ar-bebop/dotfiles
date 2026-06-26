@@ -1,5 +1,5 @@
 return {
     'igorlfs/nvim-dap-view',
-    cmd = 'DapViewOpen',
+    cmd = { 'DapViewOpen', 'DapViewToggle' },
     opts = {},
 }
