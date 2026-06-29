@@ -11,3 +11,7 @@ for file in $fisher_path/conf.d/*.fish
 end
 
 zoxide init fish | source
+
+if status is-interactive; and not functions -q fisher
+    curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
+end
