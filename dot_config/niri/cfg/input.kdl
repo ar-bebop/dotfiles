@@ -5,8 +5,8 @@ input {
             // uncomment the line below and change the layout accordingly.
             //layout "us" // Use the American keyboard layout
         }
-        repeat-delay 400
-        repeat-rate 40
+        repeat-delay 200
+        repeat-rate 50
         numlock // Enable numlock on startup
     }
 

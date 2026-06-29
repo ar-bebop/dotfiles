@@ -1,6 +1,36 @@
 {
-  "editorMode": "vim",
-  "effortLevel": "xhigh",
+  "permissions": {
+    "allow": [
+      "mcp__codegraph__codegraph_explore",
+      "mcp__codegraph__codegraph_search",
+      "mcp__codegraph__codegraph_node",
+      "mcp__codegraph__codegraph_callers",
+      "mcp__codegraph__codegraph_callees",
+      "mcp__codegraph__codegraph_impact",
+      "mcp__codegraph__codegraph_files",
+      "mcp__codegraph__codegraph_status"
+    ],
+    "defaultMode": "auto"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/home/bebop/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"/home/bebop/.claude/statusline.sh\"",
+    "refreshInterval": 2
+  },
   "enabledPlugins": {
     "chrome-devtools-mcp@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
@@ -34,56 +64,26 @@
   "extraKnownMarketplaces": {
     "taste-skill": {
       "source": {
-        "repo": "Leonxlnx/taste-skill",
-        "source": "github"
+        "source": "github",
+        "repo": "Leonxlnx/taste-skill"
       }
     },
     "understand-anything": {
       "source": {
-        "repo": "Egonex-AI/Understand-Anything",
-        "source": "github"
+        "source": "github",
+        "repo": "Egonex-AI/Understand-Anything"
       }
     }
   },
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "command": "bash '/home/bebop/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10,
-            "type": "command"
-          }
-        ],
-        "matcher": "*"
-      }
-    ]
-  },
-  "permissions": {
-    "allow": [
-      "mcp__codegraph__codegraph_explore",
-      "mcp__codegraph__codegraph_search",
-      "mcp__codegraph__codegraph_node",
-      "mcp__codegraph__codegraph_callers",
-      "mcp__codegraph__codegraph_callees",
-      "mcp__codegraph__codegraph_impact",
-      "mcp__codegraph__codegraph_files",
-      "mcp__codegraph__codegraph_status"
-    ],
-    "defaultMode": "auto"
-  },
-  "preferredNotifChannel": "ghostty",
-  "skipWorkflowUsageWarning": true,
-  "statusLine": {
-    "command": "bash \"/home/bebop/.claude/statusline.sh\"",
-    "refreshInterval": 2,
-    "type": "command"
-  },
-  "theme": "custom:ansi",
+  "effortLevel": "xhigh",
   "tui": "fullscreen",
   "voice": {
     "enabled": false,
     "mode": "hold"
   },
+  "skipWorkflowUsageWarning": true,
+  "theme": "custom:ansi",
+  "editorMode": "vim",
+  "preferredNotifChannel": "ghostty",
   "voiceEnabled": false
 }
