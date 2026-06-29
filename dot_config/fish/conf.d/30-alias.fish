@@ -26,9 +26,6 @@ alias hw='hwinfo --short'                                           # Hardware I
 alias big="expac -H M '%m\t%n' | sort -h | nl"                      # Sort installed packages according to size in MB
 alias gitpkg='pacman -Q | grep -i "\-git" | wc -l'                  # List amount of -git packages
 
-# Get fastest mirrors
-alias mirror="sudo cachyos-rate-mirrors"
-
 alias please='sudo'
 alias tb='ncat termbin.com 9999'
 
