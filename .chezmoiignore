@@ -1,15 +1,13 @@
-# Matugen/Noctalia-generated theme files — rewritten on every colorscheme change,
-# so they're not tracked (would show as perpetually modified). Noctalia/matugen
-# regenerates them on the target machine when a theme is applied.
 .config/niri/noctalia.kdl
 .config/foot/themes/noctalia
 .config/nvim/lua/palette.lua
 .claude/themes/ansi.json
-
-# --- Per-machine / machine-specific: deliberately NOT tracked ---
-# niri display & monitor layout (outputs/scale/resolution) differs per machine
 .config/niri/cfg/display.kdl
-# fish-managed universal var state; PATH is set portably in conf.d/20-paths.fish (~)
 .config/fish/fish_variables
-# machine-specific git signing key — git includes config.local; each machine keeps its own
 .config/git/config.local
+
+{{ if ne .chezmoi.hostname "lain" -}}
+.config/niri
+.config/niri/**
+.config/environment.d/20-gaming.conf
+{{ end -}}
