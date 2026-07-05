@@ -9,8 +9,6 @@ window-padding-balance = true
 
 cursor-style = bar
 
-background-opacity = 0.5
-
 resize-overlay = never
 
 quit-after-last-window-closed = true
