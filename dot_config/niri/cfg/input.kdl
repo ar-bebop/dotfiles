@@ -16,14 +16,13 @@ input {
     }
 
     mouse {
-        // If you want to disable Mouse Acceleration,
-        // uncomment the lines below.
-        //accel-profile "flat"
-        //accel-speed 0.0
+        accel-profile "flat"
+        accel-speed 0.0
     }
 
-    focus-follows-mouse // Automatically focus windows under the mouse pointer
-    workspace-auto-back-and-forth // Enable workspace back & forth switching
+    warp-mouse-to-focus
+    focus-follows-mouse max-scroll-amount="0%"
+    workspace-auto-back-and-forth
     mod-key "Super"
     mod-key-nested "Alt"
 }

@@ -1,6 +1,14 @@
 window-rule {
-    geometry-corner-radius 0
+    geometry-corner-radius 20
     clip-to-geometry true
+    draw-border-with-background false
+}
+
+window-rule {
+    match app-id="zen"
+    background-effect {
+        blur true
+    }
 }
 
 // if you use steam you will probably like these
@@ -9,11 +17,18 @@ window-rule {
     exclude title=r#"^[Ss]team$"#
     open-floating true
 }
-
 window-rule {
     match app-id="steam" title=r#"^notificationtoasts_\d+_desktop$"#
     default-floating-position x=10 y=10 relative-to="bottom-right"
     open-focused false
+}
+
+// Floating Noctalia settings window.
+window-rule {
+    match app-id="dev.noctalia.Noctalia.Settings"
+    open-floating true
+    default-column-width { fixed 1080; }
+    default-window-height { fixed 920; }
 }
 
 // Set the regular wallpaper on the backdrop.

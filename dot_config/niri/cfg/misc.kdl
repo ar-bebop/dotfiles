@@ -15,6 +15,13 @@ cursor {
     xcursor-size 24
 }
 
+blur {
+    passes 2
+    offset 2
+    noise 0
+    saturation 1.5
+}
+
 debug {
     // Allows notification actions and window activation from Noctalia.
     honor-xdg-activation-with-invalid-serial
