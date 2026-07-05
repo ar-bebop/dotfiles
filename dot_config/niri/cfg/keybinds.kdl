@@ -2,11 +2,9 @@ binds {
     Mod+Shift+ESCAPE                    { show-hotkey-overlay; }
 
     // Noctalia
-    Mod+P                     		    hotkey-overlay-title="Open App Launcher" { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
-    Mod+BackSpace                       hotkey-overlay-title="Lock Screen" { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
-    Mod+Shift+Q                         hotkey-overlay-title="Session Menu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
-    Mod+A                               hotkey-overlay-title="Assistant Panel" { spawn-sh "qs -c noctalia-shell ipc call plugin:assistant-panel toggle"; }
-    Mod+V                               hotkey-overlay-title="Clipboard" { spawn-sh "qs -c noctalia-shell ipc call plugin:clipper toggle"; }
+    Mod+P                     		    hotkey-overlay-title="Open App Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Mod+BackSpace                       hotkey-overlay-title="Lock Screen" { spawn-sh "noctalia msg session lock"; }
+    Mod+Shift+Q                         hotkey-overlay-title="Session Menu" { spawn-sh "noctalia msg session menu"; }
 
     // Applications
     Mod+Return                          hotkey-overlay-title="Open Terminal: ghostty" { spawn "ghostty" "+new-window"; }
@@ -14,18 +12,18 @@ binds {
     Mod+E                               hotkey-overlay-title="File Manager: Nautilus" { spawn "nautilus"; }
 
     // Media Controls
-    XF86AudioRaiseVolume                allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call volume increase"; }
-    XF86AudioLowerVolume                allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call volume decrease"; }
-    XF86AudioMute                       repeat=false allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call volume muteOutput"; }
-    XF86AudioMicMute                    repeat=false allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call volume muteInput"; }
-    XF86AudioNext                       repeat=false allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call media next"; }
-    XF86AudioPrev                       repeat=false allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call media previous"; }
-    XF86AudioPlay                       repeat=false allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
-    XF86AudioPause                      repeat=false allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
+    XF86AudioRaiseVolume                allow-when-locked=true { spawn-sh "noctalia msg volume-up"; }
+    XF86AudioLowerVolume                allow-when-locked=true { spawn-sh "noctalia msg volume-down"; }
+    XF86AudioMute                       repeat=false allow-when-locked=true { spawn-sh "noctalia msg volume-mute"; }
+    XF86AudioMicMute                    repeat=false allow-when-locked=true { spawn-sh "noctalia msg volume-mute-input"; }
+    XF86AudioNext                       repeat=false allow-when-locked=true { spawn-sh "noctalia msg media-next"; }
+    XF86AudioPrev                       repeat=false allow-when-locked=true { spawn-sh "noctalia msg media-previous"; }
+    XF86AudioPlay                       repeat=false allow-when-locked=true { spawn-sh "noctalia msg media-play-pause"; }
+    XF86AudioPause                      repeat=false allow-when-locked=true { spawn-sh "noctalia msg media-play-pause"; }
 
     // Brightness Controls
-    XF86MonBrightnessUp                 allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call brightness increase"; }
-    XF86MonBrightnessDown               allow-when-locked=true { spawn-sh "qs -c noctalia-shell ipc call brightness decrease"; }
+    XF86MonBrightnessUp                 allow-when-locked=true { spawn-sh "noctalia msg brightness-up"; }
+    XF86MonBrightnessDown               allow-when-locked=true { spawn-sh "noctalia msg brightness-down"; }
 
     // Screenshots
     Print                        	    repeat=false { screenshot; }

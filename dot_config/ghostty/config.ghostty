@@ -18,6 +18,8 @@ quit-after-last-window-closed-delay = 5m
 
 confirm-close-surface = false
 
+app-notifications = no-clipboard-copy
+
 keybind = ctrl+shift+k=jump_to_prompt:-1
 keybind = ctrl+shift+j=jump_to_prompt:1
 
