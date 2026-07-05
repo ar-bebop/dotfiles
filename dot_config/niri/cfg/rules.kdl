@@ -4,8 +4,15 @@ window-rule {
     draw-border-with-background false
 }
 
+// blur
 window-rule {
     match app-id="zen"
+    background-effect {
+        blur true
+    }
+}
+window-rule {
+    match app-id="com.mitchellh.ghostty"
     background-effect {
         blur true
     }

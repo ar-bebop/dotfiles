@@ -19,7 +19,7 @@ blur {
     passes 2
     offset 2
     noise 0
-    saturation 1.5
+    saturation 1
 }
 
 debug {
