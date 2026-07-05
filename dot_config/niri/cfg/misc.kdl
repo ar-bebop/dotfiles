@@ -11,8 +11,6 @@ environment {
 }
 
 cursor {
-    hide-when-typing
-    hide-after-inactive-ms 2000
     xcursor-theme "capitaine-cursors"
     xcursor-size 24
 }
