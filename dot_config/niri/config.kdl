@@ -1,5 +1,4 @@
 spawn-at-startup "noctalia"
-spawn-at-startup "wl-paste" "--watch" "cliphist" "store"
 
 include "./cfg/animation.kdl"
 include "./cfg/keybinds.kdl"
