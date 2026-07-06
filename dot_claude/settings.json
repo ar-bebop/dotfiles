@@ -60,7 +60,8 @@
     "terraform@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "understand-anything@understand-anything": true,
-    "workos@claude-plugins-official": true
+    "workos@claude-plugins-official": true,
+    "tmux-agent-sidebar@hiroppy": true
   },
   "extraKnownMarketplaces": {
     "taste-skill": {
@@ -73,6 +74,12 @@
       "source": {
         "source": "github",
         "repo": "Egonex-AI/Understand-Anything"
+      }
+    },
+    "hiroppy": {
+      "source": {
+        "source": "directory",
+        "path": "/home/bebop/.config/tmux/plugins/tmux-agent-sidebar"
       }
     }
   },
