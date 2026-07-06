@@ -1,37 +1,6 @@
 {
-  "permissions": {
-    "allow": [
-      "mcp__codegraph__codegraph_explore",
-      "mcp__codegraph__codegraph_search",
-      "mcp__codegraph__codegraph_node",
-      "mcp__codegraph__codegraph_callers",
-      "mcp__codegraph__codegraph_callees",
-      "mcp__codegraph__codegraph_impact",
-      "mcp__codegraph__codegraph_files",
-      "mcp__codegraph__codegraph_status"
-    ],
-    "defaultMode": "auto"
-  },
-  "model": "claude-fable-5[1m]",
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash '/home/bebop/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10
-          }
-        ]
-      }
-    ]
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "bash \"/home/bebop/.claude/statusline.sh\"",
-    "refreshInterval": 2
-  },
+  "editorMode": "vim",
+  "effortLevel": "xhigh",
   "enabledPlugins": {
     "chrome-devtools-mcp@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
@@ -58,40 +27,58 @@
     "superpowers@claude-plugins-official": true,
     "taste-skill@taste-skill": true,
     "terraform@claude-plugins-official": true,
+    "tmux-agent-sidebar@hiroppy": true,
     "typescript-lsp@claude-plugins-official": true,
     "understand-anything@understand-anything": true,
-    "workos@claude-plugins-official": true,
-    "tmux-agent-sidebar@hiroppy": true
+    "workos@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
+    "hiroppy": {
+      "source": {
+        "path": "/home/bebop/.config/tmux/plugins/tmux-agent-sidebar",
+        "source": "directory"
+      }
+    },
     "taste-skill": {
       "source": {
-        "source": "github",
-        "repo": "Leonxlnx/taste-skill"
+        "repo": "Leonxlnx/taste-skill",
+        "source": "github"
       }
     },
     "understand-anything": {
       "source": {
-        "source": "github",
-        "repo": "Egonex-AI/Understand-Anything"
-      }
-    },
-    "hiroppy": {
-      "source": {
-        "source": "directory",
-        "path": "/home/bebop/.config/tmux/plugins/tmux-agent-sidebar"
+        "repo": "Egonex-AI/Understand-Anything",
+        "source": "github"
       }
     }
   },
-  "effortLevel": "xhigh",
+  "hooks": {},
+  "model": "claude-fable-5[1m]",
+  "permissions": {
+    "allow": [
+      "mcp__codegraph__codegraph_explore",
+      "mcp__codegraph__codegraph_search",
+      "mcp__codegraph__codegraph_node",
+      "mcp__codegraph__codegraph_callers",
+      "mcp__codegraph__codegraph_callees",
+      "mcp__codegraph__codegraph_impact",
+      "mcp__codegraph__codegraph_files",
+      "mcp__codegraph__codegraph_status"
+    ],
+    "defaultMode": "auto"
+  },
+  "preferredNotifChannel": "ghostty",
+  "skipWorkflowUsageWarning": true,
+  "statusLine": {
+    "command": "bash \"/home/bebop/.claude/statusline.sh\"",
+    "refreshInterval": 2,
+    "type": "command"
+  },
+  "theme": "custom:ansi",
   "tui": "fullscreen",
   "voice": {
     "enabled": false,
     "mode": "hold"
   },
-  "skipWorkflowUsageWarning": true,
-  "theme": "custom:ansi",
-  "editorMode": "vim",
-  "preferredNotifChannel": "ghostty",
   "voiceEnabled": false
 }
