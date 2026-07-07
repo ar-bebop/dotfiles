@@ -1,0 +1,7 @@
+# v5 user-template schema (docs.noctalia.dev/v5/theming/app-theming). The bare
+# [templates.<name>] form only works for standalone `noctalia theme -c` runs —
+# the daemon ignores it, so the template never rendered on palette changes.
+[theme.templates.user.nvim-base16]
+input_path  = "~/.config/noctalia/templates/nvim.lua"
+output_path = "~/.config/nvim/lua/palette.lua"
+post_hook   = "pkill -SIGUSR1 nvim"
