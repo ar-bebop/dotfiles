@@ -1,6 +1,24 @@
 {
-  "editorMode": "vim",
-  "effortLevel": "xhigh",
+  "permissions": {
+    "allow": [
+      "mcp__codegraph__codegraph_explore",
+      "mcp__codegraph__codegraph_search",
+      "mcp__codegraph__codegraph_node",
+      "mcp__codegraph__codegraph_callers",
+      "mcp__codegraph__codegraph_callees",
+      "mcp__codegraph__codegraph_impact",
+      "mcp__codegraph__codegraph_files",
+      "mcp__codegraph__codegraph_status"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "claude-fable-5[1m]",
+  "hooks": {},
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"/home/bebop/.claude/statusline.sh\"",
+    "refreshInterval": 2
+  },
   "enabledPlugins": {
     "chrome-devtools-mcp@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
@@ -35,50 +53,32 @@
   "extraKnownMarketplaces": {
     "hiroppy": {
       "source": {
-        "path": "/home/bebop/.config/tmux/plugins/tmux-agent-sidebar",
-        "source": "directory"
+        "source": "directory",
+        "path": "/home/bebop/.config/tmux/plugins/tmux-agent-sidebar"
       }
     },
     "taste-skill": {
       "source": {
-        "repo": "Leonxlnx/taste-skill",
-        "source": "github"
+        "source": "github",
+        "repo": "Leonxlnx/taste-skill"
       }
     },
     "understand-anything": {
       "source": {
-        "repo": "Egonex-AI/Understand-Anything",
-        "source": "github"
+        "source": "github",
+        "repo": "Egonex-AI/Understand-Anything"
       }
     }
   },
-  "hooks": {},
-  "model": "claude-fable-5[1m]",
-  "permissions": {
-    "allow": [
-      "mcp__codegraph__codegraph_explore",
-      "mcp__codegraph__codegraph_search",
-      "mcp__codegraph__codegraph_node",
-      "mcp__codegraph__codegraph_callers",
-      "mcp__codegraph__codegraph_callees",
-      "mcp__codegraph__codegraph_impact",
-      "mcp__codegraph__codegraph_files",
-      "mcp__codegraph__codegraph_status"
-    ],
-    "defaultMode": "auto"
-  },
-  "preferredNotifChannel": "ghostty",
-  "skipWorkflowUsageWarning": true,
-  "statusLine": {
-    "command": "bash \"/home/bebop/.claude/statusline.sh\"",
-    "refreshInterval": 2,
-    "type": "command"
-  },
-  "theme": "custom:ansi",
+  "effortLevel": "xhigh",
   "tui": "fullscreen",
   "voice": {
-    "enabled": false,
+    "enabled": true,
     "mode": "hold"
   },
-  "voiceEnabled": false
+  "skipWorkflowUsageWarning": true,
+  "theme": "custom:ansi",
+  "editorMode": "vim",
+  "preferredNotifChannel": "ghostty",
+  "voiceEnabled": true
 }
