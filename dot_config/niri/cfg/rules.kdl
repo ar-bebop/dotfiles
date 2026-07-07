@@ -18,9 +18,9 @@ window-rule {
     }
 }
 
+// Float extension popups (Bitwarden etc.) in Zen only.
 window-rule {
-    match app-id="zen"
-    match title="Bitwarden"
+    match app-id="zen" title="^Extension:"
     open-floating true
 }
 
