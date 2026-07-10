@@ -1,3 +1,5 @@
+spawn-at-startup "noctalia"
+
 include "./cfg/animation.kdl"
 include "./cfg/keybinds.kdl"
 include "./cfg/input.kdl"
