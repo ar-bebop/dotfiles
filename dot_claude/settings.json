@@ -92,5 +92,8 @@
   "theme": "custom:ansi",
   "editorMode": "vim",
   "preferredNotifChannel": "ghostty",
+  "remoteControlAtStartup": true,
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
   "voiceEnabled": true
 }
