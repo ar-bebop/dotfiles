@@ -60,7 +60,8 @@
     "tmux-agent-sidebar@hiroppy": true,
     "typescript-lsp@claude-plugins-official": true,
     "understand-anything@understand-anything": true,
-    "workos@claude-plugins-official": true
+    "workos@claude-plugins-official": true,
+    "notion@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "hiroppy": {
