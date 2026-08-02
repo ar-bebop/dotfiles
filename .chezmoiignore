@@ -2,12 +2,10 @@
 .config/foot/themes/noctalia
 .config/nvim/lua/palette.lua
 .claude/themes/ansi.json
-.config/niri/cfg/display.kdl
+.config/niri/cfg/outputs.kdl
 .config/fish/fish_variables
 .config/git/config.local
 
 {{ if ne .chezmoi.hostname "lain" -}}
-.config/niri
-.config/niri/**
 .config/environment.d/20-gaming.conf
 {{ end -}}
