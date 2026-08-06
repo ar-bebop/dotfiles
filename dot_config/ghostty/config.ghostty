@@ -1,7 +1,7 @@
 theme = noctalia
 palette-generate = true
 custom-shader = shaders/cursor_warp.glsl
-background-opacity = 0.8
+background-opacity = 0.5
 background-blur = true
 
 font-family = monospace
