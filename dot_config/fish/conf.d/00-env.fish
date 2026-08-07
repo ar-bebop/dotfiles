@@ -44,3 +44,5 @@ if not set -q SSH_AUTH_SOCK; or not test -S "$SSH_AUTH_SOCK"
     test -n "$_rt"; or set _rt /run/user/(id -u)
     test -S $_rt/gcr/ssh; and set -gx SSH_AUTH_SOCK $_rt/gcr/ssh
 end
+
+set -gx MOSH_SERVER_NETWORK_TMOUT 21600
