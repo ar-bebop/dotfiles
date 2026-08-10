@@ -84,6 +84,7 @@
     }
   },
   "effortLevel": "xhigh",
+  "outputStyle": "Terse",
   "tui": "fullscreen",
   "voice": {
     "enabled": true,
