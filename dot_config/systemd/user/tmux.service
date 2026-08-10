@@ -1,0 +1,32 @@
+[Unit]
+Description=tmux default session (detached)
+Documentation=man:tmux(1)
+# Start inside the graphical session so the server (and the panes tmux-persist
+# restores at startup) inherit WAYLAND_DISPLAY/NIRI_SOCKET/etc. from the user
+# manager. Trade-off accepted 2026-07-11: no auto-started tmux for SSH logins
+# that happen before the first graphical login.
+After=graphical-session.target
+
+[Service]
+# NOT Type=forking: 'tmux new-session -d' against an ALREADY-RUNNING server is
+# just a client that exits, leaving systemd's cgroup empty. systemd then treats
+# the start as complete-with-no-main-process and immediately runs ExecStop --
+# i.e. kill-server on the live session. Verified 2026-08-10. oneshot +
+# RemainAfterExit keeps the unit active whether or not a server pre-existed.
+Type=oneshot
+RemainAfterExit=yes
+Environment=DISPLAY=:0
+# Panes must never hold the raw PID-stamped niri socket path (it dies each
+# relogin while tmux survives) — hand them the stable symlink instead;
+# tmux-env-refresh re-points it before the server forks its restored panes
+# and at every graphical-session activation (tmux-env.service).
+Environment=NIRI_SOCKET=%t/niri.sock
+ExecStartPre=-%h/.local/bin/tmux-env-refresh
+ExecStart=-/bin/sh -c '/usr/bin/tmux has-session 2>/dev/null || exec /usr/bin/tmux new-session -d'
+
+ExecStop=-%h/.config/tmux/plugins/tmux-persist/scripts/save.sh quiet all
+ExecStop=/usr/bin/tmux kill-server
+KillMode=control-group
+
+[Install]
+WantedBy=graphical-session.target

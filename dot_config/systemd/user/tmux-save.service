@@ -1,0 +1,14 @@
+[Unit]
+Description=Save tmux sessions (tmux-persist)
+Documentation=man:tmux(1)
+
+[Service]
+Type=oneshot
+# Skip cleanly when no tmux server is running: a non-zero ExecCondition leaves
+# the unit inactive with Result=success, not failed. stderr is muted here only
+# so the probe does not log "error connecting to /tmp/tmux-1000/default" on
+# every timer tick when tmux is down -- ExecStart's stderr stays visible.
+ExecCondition=/bin/sh -c '/usr/bin/tmux has-session 2>/dev/null'
+# Leading '-' so a machine that has not run 'prefix + I' yet (no plugin on
+# disk) does not leave a failed unit behind.
+ExecStart=-%h/.config/tmux/plugins/tmux-persist/scripts/save.sh quiet all

@@ -1,0 +1,24 @@
+#!/bin/sh
+# Push live Wayland/niri session vars into the running tmux server's global
+# environment, and maintain a login-stable alias for niri's IPC socket.
+# NIRI_SOCKET's real path embeds niri's PID, so it changes every login — but
+# long-lived tmux panes keep whatever env they forked with. Panes therefore
+# get the stable symlink below instead of the raw path; this script re-points
+# the symlink at each graphical-session activation (tmux-env.service) and
+# before the tmux server forks its restored panes (tmux.service ExecStartPre).
+# New panes inherit pushed values; already-running shells keep their env.
+
+runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+env_dump=$(systemctl --user show-environment)
+
+real_niri=$(printf '%s\n' "$env_dump" | sed -n 's/^NIRI_SOCKET=//p')
+[ -n "$real_niri" ] && ln -sfn "$real_niri" "$runtime_dir/niri.sock"
+
+tmux has-session 2>/dev/null || exit 0
+
+[ -n "$real_niri" ] && tmux set-environment -g NIRI_SOCKET "$runtime_dir/niri.sock"
+for var in WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE; do
+    val=$(printf '%s\n' "$env_dump" | sed -n "s/^${var}=//p")
+    [ -n "$val" ] && tmux set-environment -g "$var" "$val"
+done
+exit 0
