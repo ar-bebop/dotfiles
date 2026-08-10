@@ -46,3 +46,4 @@ if not set -q SSH_AUTH_SOCK; or not test -S "$SSH_AUTH_SOCK"
 end
 
 set -gx MOSH_SERVER_NETWORK_TMOUT 21600
+set -gx CLOUDSDK_PYTHON_SITEPACKAGES 1
