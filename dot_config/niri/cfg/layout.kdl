@@ -2,13 +2,12 @@ layout {
     gaps 10
     center-focused-column "never"
     background-color "transparent" // <- needed for noctalia-shell to set wallpaper
-    always-center-single-column
 
-    default-column-width { proportion 0.95; }
+    default-column-width { proportion 0.98; }
     preset-column-widths {
-        proportion 0.3
-        proportion 0.5
-        proportion 0.95
+        proportion 0.98
+        proportion 0.49
+        proportion 0.32
     }
 
     border {
