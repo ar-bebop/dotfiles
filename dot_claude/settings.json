@@ -83,8 +83,8 @@
       }
     }
   },
-  "effortLevel": "xhigh",
   "outputStyle": "Terse",
+  "effortLevel": "xhigh",
   "tui": "fullscreen",
   "voice": {
     "enabled": true,
@@ -97,5 +97,38 @@
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
+  "autoMode": {
+    "soft_deny": [
+      "$defaults",
+      "Bash(terraform apply:*) in infra/envs/prod — Protected-Scope IaC Apply already covers prod IaC, but explicitly flag prod terraform.tfvars/apply as requiring operator execution per CLAUDE.md",
+      "Bash(gcloud sql instances failover:*) and other prod Cloud SQL mutating gcloud calls — operator-only per CLAUDE.md, not just a generic Production Deploy/Reads case"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: a19g (GCP org a19g.com; GitHub org a19g)",
+      "**Cloud provider(s)**: GCP — projects `haulorithm-dev`, `haulorithm-prod`; shared `a19g-cicd` (Artifact Registry, Cloud Build, Terraform state, log sink) and `a19g-core` under the org's `internal`/`common` folders",
+      "**Repository visibility**: PRIVATE — a19g/haulorithm (confirmed via gh)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: GCP Secret Manager (`gcloud secrets`) — per-tenant connector secrets follow `t-<org_uuid>-<source>-<purpose>`; no hardcoded credentials anywhere",
+      "**Default / protected branches**: `main` (default) — protected via active ruleset; `dev` — protected via active ruleset (integration branch, lanes merge here); both confirmed via gh rulesets",
+      "**CI/CD deploy targets**: GCP Cloud Run — `haulorithm-dev` (auto-deploy on `dev` push) and `haulorithm-prod` (operator-run promotion via `deploy-prod`/`release-prod.sh`, ff-only from `dev` to `main`)",
+      "**Network posture**: None configured",
+      "**Source control**: GitHub — a19g/haulorithm (this repo) and its `origin` remote only; a separate `foundation` repo owns the GCP org skeleton and is out of scope for this repo's changes",
+      "**Trusted internal domains**: app.haulorithm.com (prod), haulorithm-web-76swq4bciq-uk.a.run.app (Cloud Run revision URL) — both this project's own deployed surfaces",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: Cloud SQL (Postgres 18, via cloud-sql-proxy/IAP tunnel, operator-only), ElectricSQL shape-auth proxy, WorkOS AuthKit (authentication only), Cloud Run services `connectors-sync-alvys` / `connectors-sync-samsara`",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: `app/web/.env.local` and `.env` (gitignored, local secrets); `infra/envs/{dev,prod}/*_secret.tf` and related Terraform (Secret Manager references for eia/samsara/tomtom secrets); `db/bootstrap/prod-bootstrap.sql`; `docs/runbooks/secret-rotation.md`; client/tenant data in Postgres under RLS (`core`/`ingest`/`read` schemas) — audience is staff via audited `/staff` impersonation only, never direct client membership",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any host/namespace containing `prod`/`production` as a whole segment — explicitly includes `app.haulorithm.com` (prod), `haulorithm-prod` GCP project, and the `prod` Cloud SQL instance/Cloud Run services",
+      "**Protected deployment namespaces / environments**: `haulorithm-prod` GCP project; the `main` branch (auto-promotes prod on push/merge, operator-only); prod DB migrations (operator-run `goose up` via `DB_ENV=prod scripts/db-migrate.sh up`)",
+      "**Protected IaC scopes**: `infra/envs/prod/` (this repo's prod Terraform — plan-gated, operator-applies only); the org skeleton (folders, org policies, org/folder IAM, `a19g-cicd`, `a19g-core`/DNS, per-project budgets) lives in the separate `foundation` repo and is out of scope here entirely",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development — multi-tenant SaaS platform work (backend connectors, frontend, DB migrations, IaC) in this repo, routine under lane-worktree branches",
+      "**Trusted repo**: a19g/haulorithm (this repo, private) and its `origin` remote (github.com:a19g/haulorithm.git); a sibling reference checkout `bcs` is read-only reference material per CLAUDE.md, not a push target",
+      "**Org-specific CLIs**: `gcloud`, `terraform`, `goose` (via `scripts/db-migrate.sh`), `scripts/*.sh` (claim-ids.sh, preflight.sh, lane-done.sh, ci-heal.sh, release-prod.sh, dev-up.sh), `pnpm` (check-design/check-bundle), `uv` (Python connectors)",
+      "**routine under this repo's lane-worktree prefix**: `.claude/worktrees/<id>` and feature/lane branches merging into `dev` via PR are routine; pushes/merges to `main`, force-pushes, and prod Terraform applies are operator-only"
+    ]
+  },
   "voiceEnabled": true
 }
