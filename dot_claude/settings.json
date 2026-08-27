@@ -82,7 +82,7 @@
       }
     }
   },
-  "outputStyle": "Terse",
+  "outputStyle": "Concise",
   "effortLevel": "xhigh",
   "tui": "fullscreen",
   "voice": {
