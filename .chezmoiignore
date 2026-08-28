@@ -1,7 +1,6 @@
 .config/niri/noctalia.kdl
 .config/foot/themes/noctalia
 .config/nvim/lua/palette.lua
-.claude/themes/ansi.json
 .config/niri/cfg/outputs.kdl
 .config/fish/fish_variables
 .config/git/config.local
