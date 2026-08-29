@@ -2,3 +2,11 @@ Host *
     AddKeysToAgent yes
     ServerAliveInterval 60
     ServerAliveCountMax 3
+
+Host lain
+    HostName 100.123.35.52
+    User bebop
+
+Host think
+    HostName 100.79.55.74
+    User bebop
