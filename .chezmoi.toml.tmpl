@@ -16,5 +16,15 @@ it will never use is not.
     autoCommit = true
     autoPush = true
 
+# The doctor is a plain run_after_ script, so it re-runs on every apply -- which
+# is the point, since tools get uninstalled and features toggled long after the
+# first bootstrap. chezmoi reports any script that will run as pending, though,
+# so `chezmoi status` would otherwise carry a permanent "R .chezmoiscripts/..."
+# line and never read clean again. Excluding scripts from STATUS only: `chezmoi
+# diff` still shows script changes, and `chezmoi status -i scripts` lists them
+# on demand.
+[status]
+    exclude = ["scripts"]
+
 [data]
     features = {{ $features | toToml }}
