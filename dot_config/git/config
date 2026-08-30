@@ -1,6 +1,9 @@
 [user]
     name = ar-bebop
     email = aribeir4@gmail.com
+    # ~ is expanded by git; an absolute /home/bebop path breaks on any host
+    # where the username differs.
+    signingkey = ~/.ssh/id_ed25519.pub
 [init]
     defaultBranch = main
 
@@ -32,6 +35,3 @@
 	format = ssh
 [commit]
 	gpgsign = true
-
-[user]
-    signingkey = /home/bebop/.ssh/id_ed25519.pub
