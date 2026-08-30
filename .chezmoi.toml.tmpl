@@ -2,11 +2,8 @@
 Rendered into ~/.config/chezmoi/chezmoi.toml by `chezmoi init`, which asks the
 questions below exactly once -- the answers live in that generated file, which
 is deliberately NOT tracked (chezmoi reads it to decide what to apply, so
-managing it as a target would be circular). A plain `chezmoi init` does NOT
-ask again once that file exists: promptMultichoiceOnce is skipped whenever the
-value is already present, so a machine that answered nothing stays answered
-nothing. To change the answers, force the prompt:
-    chezmoi init --prompt --apply
+managing it as a target would be circular). `chezmoi init --prompt` re-asks;
+a plain `chezmoi init` never does, since promptMultichoiceOnce skips them.
 
 Non-interactive bootstrap keys these by the PROMPT TEXT, not by the data path:
     chezmoi init --apply --promptMultichoice 'Features=gui/claude' ar-bebop/dotfiles
@@ -23,15 +20,9 @@ it will never use is not.
 # The doctor is a plain run_after_ script, so it re-runs on every apply -- which
 # is the point, since tools get uninstalled and features toggled long after the
 # first bootstrap. chezmoi reports any script that will run as pending, though,
-# so `chezmoi status` would otherwise carry a permanent "R .chezmoiscripts/..."
-# line, and `chezmoi diff` a permanent "new file .chezmoiscripts/99-doctor.sh"
-# hunk -- neither would ever read clean, which trains you to ignore both.
-#
-# Excluded from BOTH. The cost is that a real edit to a script no longer shows
-# up in `chezmoi diff`; `chezmoi diff -x none` (likewise `status -x none`) still
-# lists them on demand, and that is the command to reach for after touching
-# anything under .chezmoiscripts/. Note a bare `-i scripts` does NOT override a
-# config-level exclude.
+# so status and diff would otherwise never read clean again. Excluded from both;
+# `-x none` lists them on demand -- use it after editing anything under
+# .chezmoiscripts/ (a bare -i scripts does NOT override a config-level exclude).
 [status]
     exclude = ["scripts"]
 
