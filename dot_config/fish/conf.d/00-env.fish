@@ -15,77 +15,29 @@ if command -q bat
     set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 end
 
-# environment.d feeds the systemd user manager; sshd/PAM logins never read it,
-# so remote shells arrive without any of it. Bridge it.
-#
-# KEYS always come from environment.d, which stays the single source of truth
-# on every distro. Restricting to declared keys is load-bearing: it excludes
-# session state (TERM, PATH, PWD, DISPLAY, WAYLAND_DISPLAY, NIRI_SOCKET) that
-# would be actively wrong in a remote shell.
-#
-# VALUES come from the user manager where there is one, because those are
-# already expanded and reflect anything set later in the session. Where there
-# is no systemd at all (Alpine runs OpenRC) nothing ever reads environment.d,
-# so the files are expanded here instead -- otherwise EDITOR, the XDG dirs and
-# every toolchain path would simply be unset on those machines.
-if status is-login; and not set -q ENVIRONMENT_D
-    # find, not a glob: fish errors on a non-matching wildcard, and this config
-    # also deploys to machines with no environment.d at all. Sorted, because
-    # environment.d applies files in lexical order and later ones build on
-    # earlier ones (10-paths expands ${XDG_STATE_HOME}, set by 00-xdg).
-    set -l _confs (find $HOME/.config/environment.d -maxdepth 1 -name '*.conf' -type f 2>/dev/null | sort)
-    if test (count $_confs) -gt 0
-        set -l _keys (string replace -rf '^([A-Za-z_][A-Za-z0-9_]*)=.*$' '$1' -- (cat $_confs 2>/dev/null))
+# Shell/CLI environment. Graphical-only vars live in niri's `environment {}`.
+set -gx XDG_CONFIG_HOME $HOME/.config
+set -gx XDG_DATA_HOME   $HOME/.local/share
+set -gx XDG_STATE_HOME  $HOME/.local/state
+set -gx XDG_CACHE_HOME  $HOME/.cache
 
-        set -l _from_systemd
-        for _line in (systemctl --user show-environment 2>/dev/null)
-            set -l _k (string split -m1 -f1 = -- $_line)
-            contains -- $_k $_keys; or continue   # only vars environment.d declares
-            set -a _from_systemd $_k
-            set -q $_k; and continue              # never override what is already set
-            set -l _v (string split -m1 -f2 = -- $_line)
-            string match -q -- "\$'*" $_v; and continue  # skip shell-quoted values
-            set -gx $_k $_v
-        end
+set -gx PULSE_COOKIE           $XDG_STATE_HOME/pulse/cookie
+set -gx CARGO_HOME             $XDG_DATA_HOME/cargo
+set -gx RUSTUP_HOME            $XDG_DATA_HOME/rustup
+set -gx GOPATH                 $HOME/.local/share/go
+set -gx GOBIN                  $HOME/.local/bin
+set -gx DOTNET_CLI_HOME        $XDG_DATA_HOME/dotnet
+set -gx NUGET_PACKAGES         $XDG_CACHE_HOME/nuget
+set -gx DOCKER_CONFIG          $XDG_CONFIG_HOME/docker
+set -gx NPM_CONFIG_INIT_MODULE $XDG_CONFIG_HOME/npm/config/npm-init.js
+set -gx NPM_CONFIG_CACHE       $XDG_CACHE_HOME/npm
+set -gx NODE_REPL_HISTORY      $XDG_STATE_HOME/node_repl_history
 
-        # No systemd, or a key it did not carry: expand the file value here.
-        # Only the literal and ${VAR}/$VAR forms are handled. environment.d(5)
-        # also defines ${VAR:-default}, ${VAR:+alt}, $$ escaping, quoted values
-        # and backslash continuations; none of these files use any of them, and
-        # a line using one is skipped rather than silently mis-parsed.
-        for _line in (cat $_confs 2>/dev/null)
-            set _line (string trim -- $_line)
-            string match -qr '^[A-Za-z_][A-Za-z0-9_]*=' -- $_line; or continue
-            set -l _k (string split -m1 -f1 = -- $_line)
-            contains -- $_k $_from_systemd; and continue
-            set -q $_k; and continue
-            set -l _v (string trim -- (string split -m1 -f2 = -- $_line))
-            string match -qr '\$\$|\$\{[A-Za-z_][A-Za-z0-9_]*:|\\\\$' -- $_v; and continue
-            string match -q '"*' -- $_v; and continue
-            string match -q "'*" -- $_v; and continue
-
-            # A reference to something unset would expand to a bogus value --
-            # this is exactly how SSH_AUTH_SOCK could have become "/gcr/ssh" on
-            # a host with no XDG_RUNTIME_DIR. Skip the whole assignment instead,
-            # since an unset variable is nearly always safer than a wrong one.
-            set -l _refs (string match -agr '\$\{?([A-Za-z_][A-Za-z0-9_]*)\}?' -- $_v)
-            set -l _ok 1
-            for _r in $_refs
-                if not set -q $_r; or test -z "$$_r"
-                    set _ok 0
-                    break
-                end
-            end
-            test $_ok -eq 1; or continue
-
-            for _r in $_refs
-                set _v (string replace -a '${'"$_r"'}' "$$_r" -- $_v)
-                set _v (string replace -a '$'"$_r" "$$_r" -- $_v)
-            end
-            set -gx $_k $_v
-        end
-    end
-end
+# Inherited value wins.
+set -q EDITOR;   or set -gx EDITOR nvim
+set -q VISUAL;   or set -gx VISUAL nvim
+set -q BROWSER;  or set -gx BROWSER zen-browser
+set -q TERMINAL; or set -gx TERMINAL ghostty
 
 # ssh-agent. gcr-ssh-agent.socket only exports SSH_AUTH_SOCK via
 # `systemctl --user set-environment`, which sshd/PAM logins never read -- so
