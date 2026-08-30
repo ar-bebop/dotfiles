@@ -1,3 +1,18 @@
+{{- $features := list -}}
+{{- if hasKey . "features" }}{{ $features = .features }}{{ end -}}
+{{- /*
+$features stays empty until `chezmoi init` has generated the config file.
+hasKey is required rather than `default`: chezmoi runs templates with
+missingkey=error, so a bare `.features` aborts EVERY chezmoi command on a
+machine that has not been init'd yet. Empty means "core only", which is the
+safe direction to fail -- ignoring a file never deletes it, it just stops
+chezmoi managing it.
+*/ -}}
+
+# ---- Machine-local or generated: never tracked, on any machine -------------
+# config.kdl include's these two with `optional=true`, so a fresh machine that
+# has neither gets a logged warning instead of a fatal config error, and every
+# host keeps its own copy to edit in place.
 .config/niri/noctalia.kdl
 .config/niri/cfg/outputs.kdl
 .config/foot/themes/noctalia
@@ -11,6 +26,26 @@
 # :Lazy restore still works locally -- only the cross-machine race is gone.
 .config/nvim/lazy-lock.json
 
-{{ if ne .chezmoi.hostname "lain" -}}
+# ---- Feature gates: answered once at `chezmoi init` ------------------------
+{{ if not (has "gui" $features) }}
+.config/niri
+.config/noctalia
+.config/ghostty
+.config/mpv
+.chezmoiscripts/install-uosc.sh
+{{ end }}
+{{ if not (has "claude" $features) }}
+.claude
+{{ end }}
+{{ if not (has "gaming" $features) }}
 .config/environment.d/20-gaming.conf
-{{ end -}}
+{{ end }}
+
+# ---- Auto-detected, never asked -------------------------------------------
+# The systemd user units, and the Wayland env pusher they invoke, do nothing
+# without a systemd user manager (Alpine runs OpenRC), so skip them entirely
+# rather than deploying five inert unit files.
+{{ if not (stat "/run/systemd/system") }}
+.config/systemd
+.local/bin/tmux-env-refresh
+{{ end }}

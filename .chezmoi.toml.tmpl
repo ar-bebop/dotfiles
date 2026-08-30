@@ -1,0 +1,20 @@
+{{- /*
+Rendered into ~/.config/chezmoi/chezmoi.toml by `chezmoi init`, which asks the
+questions below exactly once -- the answers live in that generated file, which
+is deliberately NOT tracked (chezmoi reads it to decide what to apply, so
+managing it as a target would be circular). Rerun `chezmoi init` to change them.
+
+Non-interactive bootstrap keys these by the PROMPT TEXT, not by the data path:
+    chezmoi init --apply --promptMultichoice 'Features=gui/claude' ar-bebop/dotfiles
+
+Defaults to nothing selected: a machine that is under-provisioned is obvious
+the moment you look at it, while one that quietly received a compositor config
+it will never use is not.
+*/ -}}
+{{- $features := promptMultichoiceOnce . "features" "Features" (list "gui" "claude" "gaming") (list) -}}
+[git]
+    autoCommit = true
+    autoPush = true
+
+[data]
+    features = {{ $features | toToml }}
