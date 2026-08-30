@@ -1,3 +1,5 @@
+.config/niri/noctalia.kdl
+.config/niri/cfg/outputs.kdl
 .config/foot/themes/noctalia
 .config/nvim/lua/palette.lua
 .config/fish/fish_variables
