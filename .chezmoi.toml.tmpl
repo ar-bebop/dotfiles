@@ -24,10 +24,18 @@ it will never use is not.
 # is the point, since tools get uninstalled and features toggled long after the
 # first bootstrap. chezmoi reports any script that will run as pending, though,
 # so `chezmoi status` would otherwise carry a permanent "R .chezmoiscripts/..."
-# line and never read clean again. Excluding scripts from STATUS only: `chezmoi
-# diff` still shows script changes, and `chezmoi status -x none` lists them on
-# demand (a bare -i scripts does NOT override a config-level exclude).
+# line, and `chezmoi diff` a permanent "new file .chezmoiscripts/99-doctor.sh"
+# hunk -- neither would ever read clean, which trains you to ignore both.
+#
+# Excluded from BOTH. The cost is that a real edit to a script no longer shows
+# up in `chezmoi diff`; `chezmoi diff -x none` (likewise `status -x none`) still
+# lists them on demand, and that is the command to reach for after touching
+# anything under .chezmoiscripts/. Note a bare `-i scripts` does NOT override a
+# config-level exclude.
 [status]
+    exclude = ["scripts"]
+
+[diff]
     exclude = ["scripts"]
 
 [data]
