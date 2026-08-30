@@ -1,0 +1,8 @@
+// Placeholder. noctalia regenerates this file with the live matugen palette
+// whenever the theme changes, and chezmoi's `create_` attribute means this
+// content is written ONLY when the file is missing -- it is never overwritten,
+// so noctalia's generated colors always survive `chezmoi apply`.
+//
+// It exists at all because config.kdl `include`s it, and niri aborts its whole
+// config on a missing include. Before this, a fresh machine got a config.kdl
+// pointing at a file that was never created.
