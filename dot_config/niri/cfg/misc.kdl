@@ -1,9 +1,6 @@
-{{- $features := list -}}
-{{- if hasKey . "features" }}{{ $features = .features }}{{ end -}}
 prefer-no-csd
 screenshot-path null
 
-// Graphical environment: reaches everything niri spawns. Shell vars are in fish conf.d.
 environment {
     ELECTRON_OZONE_PLATFORM_HINT "auto"
     QT_QPA_PLATFORM "wayland"
@@ -11,22 +8,16 @@ environment {
     QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
     XDG_CURRENT_DESKTOP "niri"
     XDG_SESSION_TYPE "wayland"
-
-    // Also in 00-env.fish -- needed by both sides.
-    PULSE_COOKIE "{{ .chezmoi.homeDir }}/.local/state/pulse/cookie"
-    CUDA_CACHE_PATH "{{ .chezmoi.homeDir }}/.cache/nv"
-
+    PULSE_COOKIE "/home/bebop/.local/state/pulse/cookie"
+    CUDA_CACHE_PATH "/home/bebop/.cache/nv"
     EDITOR "nvim"
     VISUAL "nvim"
     BROWSER "zen-browser"
     TERMINAL "ghostty"
-{{ if has "gaming" $features }}
-    // SDL x11 forces XWayland, so this is gated rather than shipped everywhere.
     __GL_SHADER_DISK_CACHE_SIZE "12000000000"
     SDL_VIDEO_DRIVER "x11"
     SDL_VIDEODRIVER "x11"
     SDL_VIDEO_FORCE_EGL "0"
-{{- end }}
 }
 
 cursor {

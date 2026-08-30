@@ -12,7 +12,7 @@ Defaults to nothing selected: a machine that is under-provisioned is obvious
 the moment you look at it, while one that quietly received a compositor config
 it will never use is not.
 */ -}}
-{{- $features := promptMultichoiceOnce . "features" "Features" (list "gui" "claude" "gaming") (list) -}}
+{{- $features := promptMultichoiceOnce . "features" "Features" (list "gui" "claude") (list) -}}
 [git]
     autoCommit = true
     autoPush = true

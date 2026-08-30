@@ -33,7 +33,7 @@ want() {
 }
 
 {{ range .tools.core }}{{ template "want" . }}{{ end }}
-{{- range $feature := list "gui" "claude" "gaming" }}
+{{- range $feature := list "gui" "claude" }}
 {{- if and (hasKey $ "features") (has $feature $.features) }}
 {{- if hasKey $.tools $feature }}
 {{ range (index $.tools $feature) }}{{ template "want" . }}{{ end }}
