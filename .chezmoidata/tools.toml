@@ -22,7 +22,7 @@ why  = "EDITOR, VISUAL and git core.editor all point at it"
 
 [[tools.core]]
 name = "tmux"
-why  = "tmux.conf and the tmux systemd units"
+why  = "tmux.conf, plus the run-shell saver loop that keeps sessions restorable"
 
 [[tools.core]]
 name = "eza"
