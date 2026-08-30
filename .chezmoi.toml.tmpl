@@ -21,8 +21,8 @@ it will never use is not.
 # first bootstrap. chezmoi reports any script that will run as pending, though,
 # so `chezmoi status` would otherwise carry a permanent "R .chezmoiscripts/..."
 # line and never read clean again. Excluding scripts from STATUS only: `chezmoi
-# diff` still shows script changes, and `chezmoi status -i scripts` lists them
-# on demand.
+# diff` still shows script changes, and `chezmoi status -x none` lists them on
+# demand (a bare -i scripts does NOT override a config-level exclude).
 [status]
     exclude = ["scripts"]
 
