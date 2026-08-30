@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Custom Claude Code statusline.
 #
 # LEFT  : vim mode | pwd | git branch (+dirty)
@@ -14,7 +14,7 @@
 INPUT=$(cat)
 j() { printf '%s' "$INPUT" | jq -r "$1" 2>/dev/null; }
 
-ESC=$'\033'
+ESC=$(printf '\033')   # $'...' is a bashism; this is the POSIX spelling
 R="${ESC}[0m"
 DIM="${ESC}[2m"
 
