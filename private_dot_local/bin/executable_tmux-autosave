@@ -1,0 +1,29 @@
+#!/bin/sh
+# Periodic tmux-persist save loop. Started detached by tmux.conf via
+# `run-shell -b`, so it lives and dies with the tmux server.
+#
+# Why this exists at all: tmux has no timer and no server-exit hook (checked
+# the 3.7 hook list -- everything is client/session/window/pane scoped), and
+# tmux-persist deliberately leaves periodic saving to tmux-continuum. continuum
+# is a proven no-op with persist: it runs whatever is in
+# @resurrect-save-script-path, and persist renamed that to
+# @persist-save-script-path, so the timer silently never fires.
+#
+# Why a background loop rather than continuum's status-line trick: measured,
+# a status-line #() hook does NOT run while the session is detached (0 ticks
+# over 5s detached, ticks only once a client attached), whereas this loop keeps
+# saving unattended -- which is exactly when an unsaved crash would hurt. It
+# also leaves no orphan: killing the server kills it.
+set -eu
+
+interval="${1:-60}"
+save="$HOME/.config/tmux/plugins/tmux-persist/scripts/save.sh"
+
+while true; do
+    sleep "$interval"
+    # Server gone: stop rather than spin. (Normally the loop is killed with it.)
+    tmux has-session 2>/dev/null || exit 0
+    # Absent on a machine where `prefix + I` has not been run yet.
+    [ -x "$save" ] || continue
+    "$save" quiet all >/dev/null 2>&1 || true
+done

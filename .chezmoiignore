@@ -41,11 +41,3 @@ chezmoi managing it.
 .config/environment.d/20-gaming.conf
 {{ end }}
 
-# ---- Auto-detected, never asked -------------------------------------------
-# The systemd user units, and the Wayland env pusher they invoke, do nothing
-# without a systemd user manager (Alpine runs OpenRC), so skip them entirely
-# rather than deploying five inert unit files.
-{{ if not (stat "/run/systemd/system") }}
-.config/systemd
-.local/bin/tmux-env-refresh
-{{ end }}
