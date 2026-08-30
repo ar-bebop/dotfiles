@@ -1,0 +1,89 @@
+# Tools these dotfiles expect, grouped by feature. dotfiles-doctor renders this
+# into a checklist for whatever features the machine actually enabled.
+#
+# Binaries, never package names: these configs run on CachyOS, Alpine, Fedora,
+# Debian and Ubuntu, where the same binary ships under different package names
+# (and occasionally not at all). `why` should say what STOPS WORKING without it,
+# so the checklist is actionable rather than a bare list of nouns.
+#
+# Optional `check` overrides the default `command -v <name>` probe.
+
+[[tools.core]]
+name = "fish"
+why  = "the login shell everything else is configured around"
+
+[[tools.core]]
+name = "git"
+why  = "chezmoi update, plus the lazy.nvim and tpm self-bootstraps"
+
+[[tools.core]]
+name = "nvim"
+why  = "EDITOR, VISUAL and git core.editor all point at it"
+
+[[tools.core]]
+name = "tmux"
+why  = "tmux.conf and the tmux systemd units"
+
+[[tools.core]]
+name = "eza"
+why  = "ls, la, ll, lt and l. are all aliases to it (30-alias.fish)"
+
+[[tools.core]]
+name = "zoxide"
+why  = "z; config.fish also errors on every shell start without it"
+
+[[tools.core]]
+name = "bat"
+why  = "MANPAGER, so every man page, plus the history function"
+
+[[tools.core]]
+name = "yazi"
+why  = "the y function and the tmux statusline"
+
+[[tools.core]]
+name = "fzf"
+why  = "tmux-sessionx (prefix + O)"
+
+[[tools.core]]
+name = "rg"
+why  = "telescope live_grep"
+
+
+[[tools.core]]
+name = "delta"
+why  = "git pager and interactive.diffFilter"
+
+[[tools.core]]
+name = "curl"
+why  = "the fisher self-bootstrap in config.fish"
+
+[[tools.core]]
+name = "python3"
+why  = "tmux-window-name renames windows after the directory"
+
+[[tools.core]]
+name = "libtmux"
+why  = "the python module tmux-window-name imports"
+check = "python3 -c 'import libtmux'"
+
+[[tools.gui]]
+name = "niri"
+why  = "the compositor itself"
+
+[[tools.gui]]
+name = "noctalia"
+why  = "bar and shell; niri spawns it at startup and binds volume/media/lock to it"
+
+[[tools.gui]]
+name = "ghostty"
+why  = "the terminal niri opens on Mod+T"
+
+[[tools.gui]]
+name = "mpv"
+why  = "mpv.conf and the uosc/thumbfast scripts"
+
+
+
+[[tools.claude]]
+name = "jq"
+why  = "the Claude Code statusline parses its input with it"
