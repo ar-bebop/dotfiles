@@ -7,9 +7,13 @@ set -g fish_cursor_replace_one underscore blink
 set -g fish_cursor_replace     underscore blink
 set -g fish_cursor_external    line blink
 
-# Format man pages
-set -gx MANROFFOPT "-c"
-set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
+# Format man pages through bat. Both variables exist only to drive bat, so
+# without it leave them unset and let man use its own pager -- pointing
+# MANPAGER at a missing binary breaks every man page on the machine.
+if command -q bat
+    set -gx MANROFFOPT "-c"
+    set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
+end
 
 # environment.d feeds the systemd user manager; sshd/PAM logins never read it,
 # so remote shells arrive without any of it. Bridge it.

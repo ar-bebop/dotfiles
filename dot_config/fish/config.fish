@@ -10,7 +10,9 @@ for file in $fisher_path/conf.d/*.fish
     source $file
 end
 
-zoxide init fish | source
+# Guarded: an unguarded `zoxide init` prints an error on every single shell
+# start on a machine that has no zoxide, which is every fresh server.
+command -q zoxide; and zoxide init fish | source
 
 if status is-interactive; and not functions -q fisher
     curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
