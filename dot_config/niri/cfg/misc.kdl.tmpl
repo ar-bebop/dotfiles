@@ -1,0 +1,67 @@
+{{- $features := list -}}
+{{- if hasKey . "features" }}{{ $features = .features }}{{ end -}}
+prefer-no-csd
+screenshot-path null
+
+// Graphical environment. niri hands this to every process it spawns and their
+// children, which is why it is the right home for anything a GUI-launched app
+// needs -- a terminal opened here passes it down, so a game started from that
+// terminal inherits it too. It does NOT reach dbus-activated services or
+// systemd user units, so nothing that only those need belongs in here.
+//
+// Shell and CLI variables live in fish's conf.d/00-env.fish instead. The few
+// entries duplicated between the two are the ones BOTH audiences need; niri
+// does not expand $VARs, so paths are rendered absolute by chezmoi.
+//
+// KDL allows exactly one `environment` node, so the gaming gate has to be a
+// template conditional inside this block rather than a separate include.
+environment {
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
+    QT_QPA_PLATFORM "wayland"
+    QT_QPA_PLATFORMTHEME "gtk3"
+    QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+    XDG_CURRENT_DESKTOP "niri"
+    XDG_SESSION_TYPE "wayland"
+
+    // Also set in 00-env.fish: pulse clients and GPU apps exist on both sides
+    // of the shell/graphical line, and neither side sees the other's config.
+    PULSE_COOKIE "{{ .chezmoi.homeDir }}/.local/state/pulse/cookie"
+    CUDA_CACHE_PATH "{{ .chezmoi.homeDir }}/.cache/nv"
+
+    // xdg-open, noctalia notification actions and "open terminal here" all
+    // read these, and none of them go through a shell.
+    EDITOR "nvim"
+    VISUAL "nvim"
+    BROWSER "zen-browser"
+    TERMINAL "ghostty"
+{{ if has "gaming" $features }}
+    // Gaming. SDL_VIDEODRIVER=x11 forces every SDL app through XWayland, which
+    // is a real behaviour change rather than a no-op -- hence the feature gate
+    // instead of shipping it to every graphical machine.
+    __GL_SHADER_DISK_CACHE_SIZE "12000000000"
+    SDL_VIDEO_DRIVER "x11"
+    SDL_VIDEODRIVER "x11"
+    SDL_VIDEO_FORCE_EGL "0"
+{{ end }}
+}
+
+cursor {
+    xcursor-theme "capitaine-cursors"
+    xcursor-size 24
+}
+
+blur {
+    passes 3
+    offset 2
+    noise 0
+    saturation 1
+}
+
+debug {
+    // Allows notification actions and window activation from Noctalia.
+    honor-xdg-activation-with-invalid-serial
+}
+
+hotkey-overlay {
+    skip-at-startup
+}

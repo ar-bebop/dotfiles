@@ -2,7 +2,11 @@
 Rendered into ~/.config/chezmoi/chezmoi.toml by `chezmoi init`, which asks the
 questions below exactly once -- the answers live in that generated file, which
 is deliberately NOT tracked (chezmoi reads it to decide what to apply, so
-managing it as a target would be circular). Rerun `chezmoi init` to change them.
+managing it as a target would be circular). A plain `chezmoi init` does NOT
+ask again once that file exists: promptMultichoiceOnce is skipped whenever the
+value is already present, so a machine that answered nothing stays answered
+nothing. To change the answers, force the prompt:
+    chezmoi init --prompt --apply
 
 Non-interactive bootstrap keys these by the PROMPT TEXT, not by the data path:
     chezmoi init --apply --promptMultichoice 'Features=gui/claude' ar-bebop/dotfiles

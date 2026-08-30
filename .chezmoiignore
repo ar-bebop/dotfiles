@@ -37,7 +37,4 @@ chezmoi managing it.
 {{ if not (has "claude" $features) }}
 .claude
 {{ end }}
-{{ if not (has "gaming" $features) }}
-.config/environment.d/20-gaming.conf
-{{ end }}
 
