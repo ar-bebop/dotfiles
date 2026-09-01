@@ -1,31 +1,8 @@
 {
   "permissions": {
-    "allow": [
-      "mcp__codegraph__codegraph_explore",
-      "mcp__codegraph__codegraph_search",
-      "mcp__codegraph__codegraph_node",
-      "mcp__codegraph__codegraph_callers",
-      "mcp__codegraph__codegraph_callees",
-      "mcp__codegraph__codegraph_impact",
-      "mcp__codegraph__codegraph_files",
-      "mcp__codegraph__codegraph_status",
-      "mcp__codegraph__*"
-    ],
     "defaultMode": "auto"
   },
   "model": "opus[1m]",
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "codegraph prompt-hook"
-          }
-        ]
-      }
-    ]
-  },
   "statusLine": {
     "type": "command",
     "command": "sh \"$HOME/.claude/statusline.sh\"",
