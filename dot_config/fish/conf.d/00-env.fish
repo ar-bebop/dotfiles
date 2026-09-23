@@ -11,8 +11,8 @@ set -g fish_cursor_external    line blink
 # without it leave them unset and let man use its own pager -- pointing
 # MANPAGER at a missing binary breaks every man page on the machine.
 if command -q bat
-    set -gx MANROFFOPT "-c"
-    set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
+    set -gx MANPAGER "bat -plman"
+    set -gx BAT_THEME "base16"
 end
 
 # Shell/CLI environment. Graphical-only vars live in niri's `environment {}`.
