@@ -96,5 +96,6 @@
       "**routine under this repo's lane-worktree prefix**: `.claude/worktrees/<id>` and feature/lane branches merging into `dev` via PR are routine; pushes/merges to `main`, force-pushes, and prod Terraform applies are operator-only"
     ]
   },
-  "voiceEnabled": true
+  "voiceEnabled": true,
+  "spinnerTipsEnabled": false
 }
