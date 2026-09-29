@@ -1,0 +1,141 @@
+#!/bin/sh
+# claude-notify: desktop notifications from Claude Code hooks (Stop, Notification, SessionEnd).
+#
+# - Quiet while the window showing this Claude has focus (its title contains the Claude's topic).
+# - One notification per Claude session: a newer one replaces the older.
+# - Clicking it jumps to that Claude: the multiplexer pane first, then the window.
+# - A click is caught by a detached waiter that lives at most LIMIT seconds; a newer
+#   notification or the session ending stops it earlier.
+#
+# Everything tied to one program is in "Backends". To change program, rewrite a
+# function's body and keep its inputs and outputs.
+
+LIMIT=300
+STATE=${XDG_RUNTIME_DIR:-/tmp}/claude-notify
+
+# Set CLAUDE_NOTIFY_LOG=<file> to trace what the script does.
+log() { [ -z "${CLAUDE_NOTIFY_LOG:-}" ] || echo "$(date +%T) [$$] $*" >> "$CLAUDE_NOTIFY_LOG"; }
+
+# ---- Backends ---------------------------------------------------------------
+
+# Notification server (freedesktop, via notify-send).
+# notify_wait <replace-id> <urgency> <title> <body>
+#   Shows a notification with one "Open" button, replacing <replace-id> when set.
+#   Prints the new id at once, then "open" if the button is clicked.
+#   Returns once it is clicked or closed.
+notify_wait() {
+    notify-send -a "Claude Code" -u "$2" -p ${1:+-r "$1"} -A "open=Open" "$3" "$4"
+}
+
+# Window manager (mango, via mmsg).
+# focused_title: prints the focused window's title; nothing if unknown.
+focused_title() {
+    mmsg get focusing-client 2>/dev/null | jq -r '.title // empty' 2>/dev/null
+}
+# raise_title <text>: focuses the first window whose title contains <text>.
+raise_title() {
+    win=$(mmsg get all-clients 2>/dev/null |
+        jq -r --arg t "$1" '[.clients[] | select(.title | contains($t))][0].id // empty' 2>/dev/null)
+    [ -n "$win" ] || return 1
+    mmsg dispatch focusid client,"$win" >/dev/null 2>&1 || return 1
+    [ -z "${CLAUDE_NOTIFY_LOG:-}" ] ||
+        log "raise_title win=$win visible=$(mmsg get client "$win" 2>/dev/null | jq -r .is_visible) now focused: $(focused_title)"
+}
+
+# Terminal multiplexer (tmux). Both do nothing outside tmux.
+# mux_where: prints where this Claude runs, e.g. "0:2".
+mux_where() {
+    [ -n "${TMUX_PANE:-}" ] || return 0
+    tmux display-message -p -t "$TMUX_PANE" '#{session_name}:#{window_index}' 2>/dev/null
+}
+# mux_jump: shows this Claude's pane on the most recently used tmux client.
+mux_jump() {
+    [ -n "${TMUX_PANE:-}" ] || return 0
+    client=$(tmux list-clients -F '#{client_activity} #{client_name}' 2>/dev/null |
+        sort -rn | head -n 1 | cut -d ' ' -f 2)
+    [ -n "$client" ] || return 1
+    tmux switch-client -c "$client" -t "$TMUX_PANE" 2>/dev/null || return 1
+    [ -z "${CLAUDE_NOTIFY_LOG:-}" ] ||
+        log "mux_jump client=$client target=$TMUX_PANE now at: $(tmux display-message -p -c "$client" '#{client_session}:#{window_index}.#{pane_index}' 2>/dev/null)"
+}
+
+# Claude Code session log.
+# claude_topic <transcript-path>: prints the session's topic (the "✳ <topic>" window title); nothing yet early on.
+claude_topic() {
+    [ -r "$1" ] || return 0
+    tac "$1" | grep -m 1 '"type":"ai-title"' | jq -r '.aiTitle // empty' 2>/dev/null
+}
+
+# ---- Waiter (runs detached, under timeout, in its own process group) ---------
+
+if [ "${1:-}" = --wait ]; then
+    state=$2 id=$3 urgency=$4 title=$5 body=$6 topic=$7
+    pgid=$(ps -o pgid= -p $$ | tr -d ' ')
+    echo "${id:--} $pgid" > "$state"
+    log "waiter start pgid=$pgid replace=${id:-none} pane=${TMUX_PANE:-none}"
+    notify_wait "$id" "$urgency" "$title" "$body" | {
+        read -r new && echo "$new $pgid" > "$state"
+        log "shown id=$new"
+        read -r action && [ "$action" = open ] || { log "closed without click"; exit 0; }
+        log "clicked"
+        mux_jump; log "mux_jump exit=$?"
+        sleep 0.3 # let the multiplexer retitle the window before looking for it
+        [ -n "$topic" ] && { raise_title "$topic"; log "raise_title exit=$?"; }
+    }
+    exit 0
+fi
+
+# ---- Hook -------------------------------------------------------------------
+
+input=$(cat)
+field() { printf '%s' "$input" | jq -r "$1 // empty"; }
+
+session=$(field .session_id)
+[ -n "$session" ] || exit 0
+mkdir -p "$STATE"
+state=$STATE/$session # "<notification-id> <waiter-pgid>"
+
+# Stops this session's previous waiter, if it is still ours and still running.
+stop_waiter() {
+    [ -r "$state" ] || return 0
+    read -r _ old < "$state"
+    case $old in '' | *[!0-9]*) return 0 ;; esac
+    ps -o args= -p "$old" 2>/dev/null | grep -q 'claude-notify --wait' && kill -- -"$old" 2>/dev/null
+}
+
+case $(field .hook_event_name) in
+    SessionEnd)
+        stop_waiter
+        rm -f "$state"
+        exit 0 ;;
+    Stop)
+        urgency=normal
+        # First non-empty line of Claude's reply, without markdown marks (most servers show them raw).
+        body=$(printf '%s' "$input" | jq -r '[(.last_assistant_message // "") | splits("\n") | select(test("\\S"))][0] // "Finished" | gsub("[*`]"; "") | sub("^#+ *"; "") | .[0:160]') ;;
+    Notification)
+        urgency=critical
+        body=$(field .message) ;;
+    *) exit 0 ;;
+esac
+[ -n "$body" ] || body="Needs you"
+
+topic=$(claude_topic "$(field .transcript_path)")
+
+# Already looking at it.
+if [ -n "$topic" ]; then
+    case $(focused_title) in *"$topic"*) exit 0 ;; esac
+fi
+
+cwd=$(field .cwd)
+title=${cwd##*/}${topic:+ · $topic}
+where=$(mux_where)
+body=$body${where:+ ($where)}
+
+id=
+[ -r "$state" ] && read -r id _ < "$state"
+[ "$id" = - ] && id=
+stop_waiter
+
+setsid -f timeout -k 5 "$LIMIT" "$0" --wait "$state" "$id" "$urgency" "$title" "$body" "$topic" \
+    < /dev/null > /dev/null 2>&1
+exit 0
