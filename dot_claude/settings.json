@@ -1,4 +1,16 @@
 {
+  "hooks": {
+    "Stop": [
+      { "hooks": [{ "type": "command", "command": "$HOME/.local/bin/claude-notify", "async": true }] }
+    ],
+    "Notification": [
+      { "matcher": "permission_prompt|elicitation_dialog",
+        "hooks": [{ "type": "command", "command": "$HOME/.local/bin/claude-notify", "async": true }] }
+    ],
+    "SessionEnd": [
+      { "hooks": [{ "type": "command", "command": "$HOME/.local/bin/claude-notify" }] }
+    ]
+  },
   "permissions": {
     "defaultMode": "auto"
   },
