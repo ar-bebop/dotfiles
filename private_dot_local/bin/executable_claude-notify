@@ -13,7 +13,8 @@
 LIMIT=300
 STATE=${XDG_RUNTIME_DIR:-/tmp}/claude-notify
 
-# Set CLAUDE_NOTIFY_LOG=<file> to trace what the script does.
+# Tracing: set CLAUDE_NOTIFY_LOG=<file>, or `touch $STATE/debug` to log every event to $STATE/log.
+[ -n "${CLAUDE_NOTIFY_LOG:-}" ] || { [ -e "$STATE/debug" ] && CLAUDE_NOTIFY_LOG=$STATE/log; }
 log() { [ -z "${CLAUDE_NOTIFY_LOG:-}" ] || echo "$(date +%T) [$$] $*" >> "$CLAUDE_NOTIFY_LOG"; }
 
 # ---- Backends ---------------------------------------------------------------
@@ -46,7 +47,8 @@ raise_title() {
 # mux_where: prints where this Claude runs, e.g. "0:2".
 mux_where() {
     [ -n "${TMUX_PANE:-}" ] || return 0
-    tmux display-message -p -t "$TMUX_PANE" '#{session_name}:#{window_index}' 2>/dev/null
+    where=$(tmux display-message -p -t "$TMUX_PANE" '#{session_name}:#{window_index}' 2>/dev/null)
+    case $where in '' | :) ;; *) printf '%s\n' "$where" ;; esac # ":" means the pane is gone
 }
 # mux_jump: shows this Claude's pane on the most recently used tmux client.
 mux_jump() {
@@ -92,6 +94,11 @@ field() { printf '%s' "$input" | jq -r "$1 // empty"; }
 
 session=$(field .session_id)
 [ -n "$session" ] || exit 0
+[ -z "${CLAUDE_NOTIFY_LOG:-}" ] ||
+    log "event=$(field .hook_event_name) type=$(field .notification_type) entry=${CLAUDE_CODE_ENTRYPOINT:-unset} cwd=$(field .cwd) session=$session pane=${TMUX_PANE:-none}"
+
+# Only interactive sessions: headless runs (claude -p, SDK, helper scripts) load these hooks too.
+[ "${CLAUDE_CODE_ENTRYPOINT:-cli}" = cli ] || exit 0
 mkdir -p "$STATE"
 state=$STATE/$session # "<notification-id> <waiter-pgid>"
 
