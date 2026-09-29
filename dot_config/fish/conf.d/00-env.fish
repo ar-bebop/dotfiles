@@ -31,18 +31,13 @@ if command -q bat
     set -gx BAT_THEME base16
 end
 
-# ssh-agent: ssh and tmux sessions don't get SSH_AUTH_SOCK from systemd, so set it
-# here. A live (e.g. forwarded) socket wins; otherwise the first agent that exists
-# (gcr, systemd ssh-agent, gpg-agent), or none rather than a dead path.
-if not set -q SSH_AUTH_SOCK; or not test -S "$SSH_AUTH_SOCK"
+# ssh-agent: agents publish SSH_AUTH_SOCK to systemd at most, which neither the desktop
+# nor ssh/mosh logins inherit, so set it here. A live (e.g. forwarded) socket wins;
+# otherwise the first agent that exists (gcr, systemd ssh-agent, gpg-agent), or none.
+if not test -S "$SSH_AUTH_SOCK"
     set -e SSH_AUTH_SOCK
-    set -l rt $XDG_RUNTIME_DIR
-    test -n "$rt"; or set rt /run/user/(id -u)
-    for sock in $rt/gcr/ssh $rt/ssh-agent.socket $rt/gnupg/S.gpg-agent.ssh
-        if test -S $sock
-            set -gx SSH_AUTH_SOCK $sock
-            break
-        end
+    for sock in $XDG_RUNTIME_DIR/{gcr/ssh,ssh-agent.socket,gnupg/S.gpg-agent.ssh}
+        test -S $sock; and set -gx SSH_AUTH_SOCK $sock; and break
     end
 end
 
