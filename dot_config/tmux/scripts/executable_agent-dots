@@ -1,0 +1,31 @@
+#!/bin/sh
+# agent-dots <session>: agent-radar upkeep, then one coloured mark per agent pane, stored per
+# session in the @agent_dots option for the status line to show next to that session's bar.
+# The mark is the status line's @sl_agent glyph; colours are its palette roles: @sl_wait (stopped,
+# not seen yet), @sl_run (working), @sl_seen (stopped, seen). Prints nothing, so it can run from
+# a #() in the status line.
+r=$HOME/.config/tmux/plugins/agent-radar/scripts
+[ -x "$r/agent-radar-status" ] || exit 0
+
+# Marks what you're looking at as seen, syncs window flags, restarts the poller if it died.
+"$r/agent-radar-status" "${1:-}" > /dev/null 2>&1
+
+# agent-radar rows: tier|age|sortkey|pane|agent|session:window.pane|state|... (tier 0 unseen, 1 working, 2 seen)
+map=$("$r/agent-radar-store" records 2> /dev/null |
+    "$r/agent-radar-classify" "$(date +%s)" 2> /dev/null |
+    sort -t '|' -k6,6V |
+    awk -F '|' '{
+        s = $6; sub(/:.*/, "", s)
+        c = ($1 == 0) ? "#{@sl_wait}" : ($1 == 1) ? "#{@sl_run}" : "#{@sl_seen}"
+        dots[s] = dots[s] "#[fg=" c "]#{@sl_agent}"
+    } END { for (s in dots) print s "|" dots[s] }')
+
+# Target sessions by id: a numeric name like "0" is ambiguous as a target.
+tmux list-sessions -F '#{session_id}|#{session_name}' 2> /dev/null | while IFS='|' read -r id s; do
+    d=$(printf '%s\n' "$map" | awk -F '|' -v s="$s" '$1 == s { print $2 }')
+    if [ -n "$d" ]; then
+        tmux set-option -q -t "$id" @agent_dots "$d"
+    else
+        tmux set-option -qu -t "$id" @agent_dots
+    fi
+done
