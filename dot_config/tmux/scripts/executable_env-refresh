@@ -1,0 +1,13 @@
+#!/bin/sh
+# env-refresh: copy the desktop session's display vars into the tmux server on
+# attach, so new panes reach the compositor even if the server started over ssh
+# before the desktop. Does nothing without systemd or a running server.
+command -v systemctl >/dev/null 2>&1 || exit 0
+tmux has-session 2>/dev/null || exit 0
+
+systemctl --user show-environment 2>/dev/null | while IFS='=' read -r var val; do
+    case $var in
+        WAYLAND_DISPLAY | DISPLAY | XDG_CURRENT_DESKTOP | XDG_SESSION_TYPE)
+            tmux set-environment -g "$var" "$val" ;;
+    esac
+done

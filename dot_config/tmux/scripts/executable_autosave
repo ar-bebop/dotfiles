@@ -1,0 +1,16 @@
+#!/bin/sh
+# autosave [seconds]: save every tmux session with tmux-persist on an interval.
+# tmux has no timer and persist only saves on detach/close, so this loop covers
+# crashes, including while nothing is attached. tmux.conf starts it once per
+# server with run-shell -b; it exits when the server is gone.
+set -eu
+
+interval=${1:-60}
+save=${XDG_CONFIG_HOME:-$HOME/.config}/tmux/plugins/tmux-persist/scripts/save.sh
+
+while true; do
+    sleep "$interval"
+    tmux has-session 2>/dev/null || exit 0
+    [ -x "$save" ] || continue # plugin not installed yet
+    "$save" quiet all >/dev/null 2>&1 || true
+done
