@@ -1,0 +1,9 @@
+#!/bin/sh
+# agent-next: jump to a window where an agent stopped and you haven't looked yet
+# (agent-radar marks those windows with @agent-radar-window-stopped).
+w=$(tmux list-windows -a -f '#{@agent-radar-window-stopped}' -F '#{session_name}:#{window_index}' | head -n 1)
+if [ -n "$w" ]; then
+    tmux switch-client -t "$w"
+else
+    tmux display-message "No agent waiting"
+fi
