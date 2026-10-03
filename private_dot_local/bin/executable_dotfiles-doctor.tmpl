@@ -5,6 +5,7 @@
 {{- $offered := get . "offered" | default list }}
 
 report=""
+cz=${CHEZMOI_EXECUTABLE:-chezmoi}  # hooks pass the running binary; ~/.local/bin may not be on PATH yet
 add() { [ -n "$2" ] && report="$report
   $1:
 $2"; }
@@ -31,7 +32,7 @@ owned() {
         *) return 1 ;;
     esac
 }
-unowned=$(chezmoi managed --include files,symlinks | while read -r f; do owned "$f" || echo "    $f"; done)
+unowned=$("$cz" managed --include files,symlinks | while read -r f; do owned "$f" || echo "    $f"; done)
 add "tracked but in no app (add to apps.toml)" "$unowned"
 
 # Files in a selected app's .config folder must be tracked or ignored
@@ -45,7 +46,7 @@ set --
 {{-     end }}
 {{-   end }}
 {{- end }}
-[ $# -gt 0 ] && add "untracked (track it, or add it to the app's ignore)" "$(chezmoi unmanaged "$@" | sed 's/^/    /')"
+[ $# -gt 0 ] && add "untracked (track it, or add it to the app's ignore)" "$("$cz" unmanaged "$@" | sed 's/^/    /')"
 
 # apps.toml changes since the last `chezmoi init`
 add "new apps, not offered here yet (run chezmoi init)" "
