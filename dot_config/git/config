@@ -1,9 +1,7 @@
 [user]
     name = ar-bebop
     email = aribeir4@gmail.com
-    # ~ is expanded by git; an absolute /home/bebop path breaks on any host
-    # where the username differs.
-    signingkey = ~/.ssh/id_ed25519.pub
+    signingkey = ~/.ssh/id_ed25519.pub  # git expands ~
 [init]
     defaultBranch = main
 
