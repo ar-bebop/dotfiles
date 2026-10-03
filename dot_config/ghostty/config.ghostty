@@ -1,4 +1,3 @@
-theme = noctalia
 palette-generate = true
 custom-shader = shaders/cursor_warp.glsl
 background-opacity = 0.5
@@ -32,4 +31,5 @@ keybind = ctrl+shift+j=jump_to_prompt:1
 keybind = ctrl+shift+t=unbind
 keybind = ctrl+shift+o=unbind
 keybind = ctrl+shift+e=unbind
+
 theme = noctalia
