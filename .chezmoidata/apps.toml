@@ -1,0 +1,76 @@
+# One entry per app, offered as a checklist by `chezmoi init`.
+#   paths   what the app owns; skipped entirely when the app isn't selected
+#   ignore  files under those paths that are generated or per machine
+#   needs   programs dotfiles-doctor checks for
+
+[apps.claude]
+paths = [".claude", ".local/bin/claude-notify"]
+needs = ["claude", "jq", "notify-send"]
+
+[apps.fish]
+paths  = [".config/fish"]
+ignore = [".config/fish/fish_variables"]
+needs  = ["fish", "curl", "eza", "zoxide", "bat"]
+
+[apps.gh]
+paths  = [".config/gh"]
+ignore = [".config/gh/hosts.yml"]  # login token
+needs  = ["gh"]
+
+[apps.ghostty]
+paths  = [".config/ghostty"]
+ignore = [".config/ghostty/themes"]  # noctalia theme
+needs  = ["ghostty"]
+
+[apps.git]
+paths = [".config/git"]
+needs = ["git", "delta"]
+
+[apps.lazygit]
+paths = [".config/lazygit"]
+needs = ["lazygit"]
+
+[apps.mango]
+paths  = [".config/mango"]
+ignore = [
+    ".config/mango/cfg/output.conf",  # monitors, per machine
+    ".config/mango/noctalia.conf",    # noctalia theme
+]
+needs  = ["mango", "noctalia"]
+
+[apps.mpv]
+paths = [".config/mpv"]
+needs = ["mpv"]
+
+[apps.niri]
+paths  = [".config/niri"]
+ignore = [
+    ".config/niri/cfg/outputs.kdl",  # monitors, per machine
+    ".config/niri/noctalia.kdl",     # noctalia theme
+]
+needs  = ["niri", "noctalia"]
+
+[apps.noctalia]
+paths = [".config/noctalia"]
+needs = ["noctalia"]
+
+[apps.nvim]
+paths  = [".config/nvim"]
+ignore = [
+    ".config/nvim/lazy-lock.json",   # per machine; :Lazy update rewrites it
+    ".config/nvim/lua/palette.lua",  # noctalia theme
+]
+needs  = ["nvim", "git", "rg", "tree-sitter", "cc"]
+
+[apps.ssh]
+paths = [".ssh"]
+needs = ["ssh"]
+
+[apps.tmux]
+paths  = [".config/tmux"]
+ignore = [".config/tmux/plugins"]  # installed by TPM
+needs  = ["tmux", "git", "fzf"]
+
+[apps.yazi]
+paths = [".config/yazi"]
+needs = ["yazi"]

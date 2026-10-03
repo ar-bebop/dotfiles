@@ -1,0 +1,6 @@
+# Cursor shaders (config.ghostty uses cursor_warp), downloaded on first apply. Update with `chezmoi apply -R`.
+
+["shaders"]
+    type = "archive"
+    url = "https://github.com/sahaj-b/ghostty-cursor-shaders/archive/HEAD.tar.gz"
+    stripComponents = 1

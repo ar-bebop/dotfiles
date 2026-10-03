@@ -1,0 +1,22 @@
+# uosc and thumbfast, downloaded on first apply. Update with `chezmoi apply -R`.
+
+["scripts/uosc"]
+    type = "archive"
+    url = "https://github.com/tomasklaen/uosc/releases/latest/download/uosc.zip"
+    include = ["scripts/uosc/**"]
+    stripComponents = 2
+    exact = true
+
+["fonts/uosc_icons.otf"]
+    type = "archive-file"
+    url = "https://github.com/tomasklaen/uosc/releases/latest/download/uosc.zip"
+    path = "fonts/uosc_icons.otf"
+
+["fonts/uosc_textures.ttf"]
+    type = "archive-file"
+    url = "https://github.com/tomasklaen/uosc/releases/latest/download/uosc.zip"
+    path = "fonts/uosc_textures.ttf"
+
+["scripts/thumbfast.lua"]
+    type = "file"
+    url = "https://raw.githubusercontent.com/po5/thumbfast/master/thumbfast.lua"

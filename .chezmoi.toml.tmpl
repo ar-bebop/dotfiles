@@ -1,33 +1,28 @@
 {{- /*
-Rendered into ~/.config/chezmoi/chezmoi.toml by `chezmoi init`, which asks the
-questions below exactly once -- the answers live in that generated file, which
-is deliberately NOT tracked (chezmoi reads it to decide what to apply, so
-managing it as a target would be circular). `chezmoi init --prompt` re-asks;
-a plain `chezmoi init` never does, since promptMultichoiceOnce skips them.
-
-Non-interactive bootstrap keys these by the PROMPT TEXT, not by the data path:
-    chezmoi init --apply --promptMultichoice 'Features=gui/claude' ar-bebop/dotfiles
-
-Defaults to nothing selected: a machine that is under-provisioned is obvious
-the moment you look at it, while one that quietly received a compositor config
-it will never use is not.
+Rendered into ~/.config/chezmoi/chezmoi.toml by `chezmoi init`, which asks which apps this machine gets.
+The choices come from .chezmoidata/apps.toml; the current picks start ticked.
+Unattended: chezmoi init --apply --promptMultichoice 'Apps=fish/nvim/tmux' ar-bebop/dotfiles
 */ -}}
-{{- $features := promptMultichoiceOnce . "features" "Features" (list "gui" "claude") (list) -}}
+{{- $apps := (include ".chezmoidata/apps.toml" | fromToml).apps | keys | sortAlpha -}}
+{{- $selected := promptMultichoice "Apps" $apps (get . "selected" | default list) -}}
+{{- $doctor := `["-c", "[ ! -x ~/.local/bin/dotfiles-doctor ] || ~/.local/bin/dotfiles-doctor"]` -}}
 [git]
     autoCommit = true
     autoPush = true
 
-# The doctor is a plain run_after_ script, so it re-runs on every apply -- which
-# is the point, since tools get uninstalled and features toggled long after the
-# first bootstrap. chezmoi reports any script that will run as pending, though,
-# so status and diff would otherwise never read clean again. Excluded from both;
-# `-x none` lists them on demand -- use it after editing anything under
-# .chezmoiscripts/ (a bare -i scripts does NOT override a config-level exclude).
-[status]
-    exclude = ["scripts"]
+# dotfiles-doctor after anything that changes files
+[hooks.apply.post]
+    command = "sh"
+    args = {{ $doctor }}
 
-[diff]
-    exclude = ["scripts"]
+[hooks.update.post]
+    command = "sh"
+    args = {{ $doctor }}
+
+[hooks.add.post]
+    command = "sh"
+    args = {{ $doctor }}
 
 [data]
-    features = {{ $features | toToml }}
+    selected = {{ $selected | toToml }}
+    offered = {{ $apps | toToml }}
