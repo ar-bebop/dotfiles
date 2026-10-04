@@ -1,18 +1,44 @@
 {
-  "hooks": {
-    "Stop": [
-      { "hooks": [{ "type": "command", "command": "$HOME/.local/bin/claude-notify", "async": true }] }
-    ],
-    "Notification": [
-      { "matcher": "permission_prompt|elicitation_dialog",
-        "hooks": [{ "type": "command", "command": "$HOME/.local/bin/claude-notify", "async": true }] }
-    ],
-    "SessionEnd": [
-      { "hooks": [{ "type": "command", "command": "$HOME/.local/bin/claude-notify" }] }
-    ]
-  },
   "permissions": {
     "defaultMode": "auto"
+  },
+  "skillOverrides": {
+    "auto-mode-setup": "off"
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.local/bin/claude-notify",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|elicitation_dialog",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.local/bin/claude-notify",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.local/bin/claude-notify"
+          }
+        ]
+      }
+    ]
   },
   "statusLine": {
     "type": "command",
@@ -20,11 +46,9 @@
     "refreshInterval": 2
   },
   "enabledPlugins": {
-    "chrome-devtools-mcp@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
-    "cloud-sql-postgresql@claude-plugins-official": true,
     "code-modernization@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
@@ -83,9 +107,6 @@
       "Source control: every repository under github.com/a19g is the operator's own and a trusted push target; read-only reference checkouts are named in each repo's CLAUDE.md.",
       "Cloud provider(s): GCP org a19g.com; projects ending in -prod are production, all others are dev or shared tooling."
     ]
-  },
-  "skillOverrides": {
-    "auto-mode-setup": "off"
   },
   "voiceEnabled": true
 }
