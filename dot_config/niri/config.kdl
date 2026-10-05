@@ -10,4 +10,3 @@ include "./cfg/layout.kdl"
 include "./cfg/rules.kdl"
 include "./cfg/misc.kdl"
 
-include optional=true "./noctalia.kdl"

@@ -5,3 +5,9 @@
 input_path  = "~/.config/noctalia/templates/nvim.lua"
 output_path = "~/.config/nvim/lua/palette.lua"
 post_hook   = "pkill -SIGUSR1 nvim"
+
+# Recolours open foot windows; the builtin foot template covers new ones
+[theme.templates.user.foot-osc]
+input_path  = "~/.config/noctalia/templates/foot-osc"
+output_path = "~/.cache/noctalia/foot-osc"
+post_hook   = "sh ~/.config/noctalia/hooks/foot-osc.sh"
