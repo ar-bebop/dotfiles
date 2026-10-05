@@ -32,4 +32,3 @@ keybind = ctrl+shift+t=unbind
 keybind = ctrl+shift+o=unbind
 keybind = ctrl+shift+e=unbind
 
-theme = noctalia
