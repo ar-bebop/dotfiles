@@ -12,6 +12,11 @@ paths  = [".config/fish"]
 ignore = [".config/fish/fish_variables"]
 needs  = ["fish", "curl", "eza", "zoxide", "bat"]
 
+[apps.foot]
+paths  = [".config/foot"]
+ignore = [".config/foot/themes"]  # noctalia theme
+needs  = ["foot"]
+
 [apps.gh]
 paths  = [".config/gh"]
 ignore = [".config/gh/hosts.yml"]  # login token
