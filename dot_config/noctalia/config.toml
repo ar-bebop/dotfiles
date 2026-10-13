@@ -11,3 +11,8 @@ post_hook   = "pkill -SIGUSR1 nvim"
 input_path  = "~/.config/noctalia/templates/foot-osc"
 output_path = "~/.cache/noctalia/foot-osc"
 post_hook   = "sh ~/.config/noctalia/hooks/foot-osc.sh"
+
+[theme.templates.user.mango-colors]
+input_path  = "~/.config/noctalia/templates/mango.conf"
+output_path = "~/.config/mango/noctalia.conf"
+post_hook   = "mmsg dispatch reload_config"
